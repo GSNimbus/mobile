@@ -7,6 +7,7 @@ import { RootStackParamList } from '../../../util/types';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { styles } from '../../../styles/styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function FormularioLogin() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Login'>>();
@@ -29,6 +30,9 @@ export default function FormularioLogin() {
             });
             if (res.status === 200) {
                 ToastAndroid.show('Login realizado com sucesso!', ToastAndroid.SHORT);
+                const data = res.data;
+                await AsyncStorage.setItem('token', data.token);
+                await AsyncStorage.setItem('user', JSON.stringify(data.user));
                 navigation.navigate('Inicio');
             } else {
                 ToastAndroid.show('Erro ao realizar login', ToastAndroid.LONG);
