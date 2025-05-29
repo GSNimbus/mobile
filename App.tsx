@@ -7,18 +7,24 @@ import Inicio from './pages/Inicio/Inicio';
 import { RootStackParamList } from './util/types';
 import Login from './pages/Login/Login';
 import Cadastro from './pages/Cadastro/Cadastro';
+import Principal from './pages/Principal/Principal';
 
 const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+
+  // fazer a verificação de token para encaminhamento de rotas
+
+
   return (
     <NavigationContainer>
-      <Navigator initialRouteName='Inicio' screenOptions={{
+      <Navigator initialRouteName='Principal' screenOptions={{
         headerShown:false,
       }}>
         <Screen name='Inicio' component={Inicio} />
         <Screen name='Login' component={Login} />
         <Screen name='Cadastro' component={Cadastro} />
+        <Screen name='Principal' component={Principal} />
       </Navigator>
     </NavigationContainer>
   );

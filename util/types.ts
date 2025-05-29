@@ -2,7 +2,9 @@ export type RootStackParamList = {
     Inicio: undefined;
     Login: undefined;
     Cadastro: undefined;
-    SecaoPrinicipal: undefined;
+    Principal: undefined;
     Perfil: undefined;
     TrocarInformacoes: undefined;
+    LocalizacoesSalvas: undefined;
+    AdicionarLocalizacao: undefined;
 };
