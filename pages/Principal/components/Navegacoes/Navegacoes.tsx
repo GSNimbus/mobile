@@ -10,10 +10,10 @@ export default function Navegacoes() {
     return (
         <View style={[{justifyContent:'space-between',paddingHorizontal:25,flexDirection:'row',alignItems:'center',paddingTop:20}]}>
             <Pressable onPress={() => navigation.navigate('Alertas')}>
-                <Ionicons name="cloud" size={28} color="#fff" />
+                <Ionicons name="alert-circle-outline" size={56} color="#fff" />
             </Pressable>
             <Pressable onPress={() => navigation.navigate('LocalizacoesSalvas')}>
-                <Ionicons name="person" size={28} color="#fff" />
+                <Ionicons name="globe" size={56} color="#fff" />
             </Pressable>
         </View>
     )

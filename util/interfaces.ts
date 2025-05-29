@@ -28,6 +28,7 @@ export interface userResponse{
 export interface enderecoInterface{
     id: string;
     cep: string;
+    nomeBairro:string;
     logradouro: string;
     cidade: cidadeInterface;
 }
@@ -45,4 +46,19 @@ export interface estadoInterface{
 export interface paisInterface{
     id: string;
     nome: string;
+}
+
+
+export interface alertaReponse{
+    id_alerta:number;
+    ds_risco:string;
+    ds_tipo:string;
+    horario_alerta:Date;
+    id_localizacao:localizacaoResponse;
+}
+
+export interface localizacaoResponse{
+    id_localizacao:number;
+    nr_longitude:number;
+    nr_latitude:number;
 }

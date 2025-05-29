@@ -10,7 +10,7 @@ interface propsPrevisaoPrincipal{
 export default function PrevisãoPrincipal(props: propsPrevisaoPrincipal) {
     
     return (
-        <View style={{flex:1, gap:30,alignItems:'center',flexDirection:'column',justifyContent:'space-around'}}>
+        <View style={{flex:1, gap:30,alignItems:'center',flexDirection:'column'}}>
             <View style={{alignItems:'center',justifyContent:'center'}}>
                 <Ionicons name="cloud-outline" size={220} color="#fff" />
                 <Text style={{color:'#fff',fontSize:24}}>{props.previsao.cidade}</Text>
