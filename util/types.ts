@@ -4,6 +4,7 @@ export type RootStackParamList = {
     Cadastro: undefined;
     Principal: undefined;
     Perfil: undefined;
+    Alertas: undefined;
     TrocarInformacoes: undefined;
     LocalizacoesSalvas: undefined;
     AdicionarLocalizacao: undefined;

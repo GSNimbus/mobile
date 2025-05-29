@@ -1,7 +1,8 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { previsaoResponse } from "../../../../util/interfaces";
+
 
 
 interface PrevisoesProps {
@@ -10,6 +11,8 @@ interface PrevisoesProps {
 
 
 export default function Previsoes() {
+
+
     const [show, setShow] = useState(false);
 
     const toggleShow = () => {
@@ -19,7 +22,7 @@ export default function Previsoes() {
 
 
     return (
-        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#5C7FA2', borderRadius: 10, padding: 20, width: '100%', position: 'relative' }}>
+        <View style={{justifyContent: 'center', alignItems: 'center', backgroundColor: '#5C7FA2', borderRadius: 10, padding: 20, width: '100%', position: 'relative', marginBottom: 30 }}>
             <Pressable onPress={toggleShow}>
                 <FontAwesome name="arrow-up" size={28} color="#fff" />
             </Pressable>

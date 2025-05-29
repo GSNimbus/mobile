@@ -8,6 +8,7 @@ import { RootStackParamList } from './util/types';
 import Login from './pages/Login/Login';
 import Cadastro from './pages/Cadastro/Cadastro';
 import Principal from './pages/Principal/Principal';
+import Previsoes from './pages/Principal/components/Previsoes/Previsoes';
 
 const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,6 +26,8 @@ export default function App() {
         <Screen name='Login' component={Login} />
         <Screen name='Cadastro' component={Cadastro} />
         <Screen name='Principal' component={Principal} />
+        <Screen name='Alertas' component={Principal}/>
+        <Screen name='LocalizacoesSalvas' component={Previsoes}/>
       </Navigator>
     </NavigationContainer>
   );

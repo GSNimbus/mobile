@@ -17,9 +17,6 @@ export default function PrevisãoPrincipal(props: propsPrevisaoPrincipal) {
                 <Text style={{fontSize:56,color:'#fff',fontWeight:700}}>{props.previsao.graus}°</Text>
                 <Text style={{color:'#fff',fontSize:28}}>{new Date(props.previsao.data).toLocaleDateString()}</Text>
             </View>
-            <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
-                <Previsoes/>
-            </View>
         </View>
     )
 }

@@ -6,12 +6,19 @@ import axios from 'axios'
 import { previsaoResponse, userResponse } from '../../util/interfaces'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import PrevisãoPrincipal from './components/PrevisaoPrincipal/PrevisaoPrincipal'
+import Previsoes from './components/Previsoes/Previsoes'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../util/types'
+import Navegacoes from './components/Navegacoes/Navegacoes'
+import { NavigationContainer } from '@react-navigation/native'
+
 
 export default function Principal() {
 
     const [user, setUser] = useState<userResponse>();
     const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([]);
 
+    const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
     useEffect(() => {
         const getUser = async () => {
@@ -54,7 +61,13 @@ export default function Principal() {
     return (
         <View style={[styles.container,{paddingTop:30,gap:30}]}>
             <Header />
-            <PrevisãoPrincipal previsao={previsaovazio} />
+            <View style={{width:'100%',flex:1}}>
+                <Navegacoes />
+                <PrevisãoPrincipal previsao={previsaovazio} />
+            </View>
+            <View style={{width:'100%',alignItems:'center',justifyContent:'center'}}>
+                <Previsoes/>
+            </View>
         </View>
     )
 }
