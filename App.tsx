@@ -1,15 +1,12 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import Inicio from './pages/Inicio/Inicio';
-
 import { RootStackParamList } from './util/types';
 import Login from './pages/Login/Login';
 import Cadastro from './pages/Cadastro/Cadastro';
 import Principal from './pages/Principal/Principal';
-import Previsoes from './pages/Principal/components/Previsoes/Previsoes';
 import Alertas from './pages/Alertas/Alertas';
+import LocalizacoesSalvas from './pages/LocalizacoesSalvas/LocalizacoesSalvas';
 
 const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
@@ -28,7 +25,7 @@ export default function App() {
         <Screen name='Cadastro' component={Cadastro} />
         <Screen name='Principal' component={Principal} />
         <Screen name='Alertas' component={Alertas}/>
-        <Screen name='LocalizacoesSalvas' component={Previsoes}/>
+        <Screen name='LocalizacoesSalvas' component={LocalizacoesSalvas}/>
       </Navigator>
     </NavigationContainer>
   );

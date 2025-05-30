@@ -7,6 +7,7 @@ import { styles } from '../../styles/styles';
 import Header from '../../components/Header/Header';
 import ListaAlerta from './components/ListaAlerta/ListaAlerta';
 import ModalDenunciar from './components/ModalDenunciarAlerta/ModalDenunciar';
+import HeaderVoltar from '../../components/HeaderVoltar/HeaderVoltar';
 
 export default function Alertas() {
     
@@ -50,10 +51,12 @@ export default function Alertas() {
     
     return (
         <View style={[styles.container,{paddingTop:30,gap:30}]}>
-            <Header />
-            <View style={{justifyContent:'flex-start',paddingHorizontal:20,gap:10}}>
-                <Text style={[styles.whiteText,{fontSize:32,fontWeight:500,textAlign:'left'}]}>Alertas</Text>
-                <View style={{borderWidth:1,width:"60%",borderColor:"white"}}></View>
+            <View style={{justifyContent:'flex-start',alignItems:'center',gap:10,flexDirection:'row'}}>
+                <HeaderVoltar />
+                <View style={{width:"60%"}}>
+                    <Text style={[styles.whiteText,{fontSize:32,fontWeight:500,textAlign:'left'}]}>Alertas</Text>
+                    <View style={{borderWidth:1,width:"60%",borderColor:"white"}}></View>
+                </View>
             </View>
             {alertas.length > 0 ? (
                 <View style={{flex:1, width:'100%'}}>

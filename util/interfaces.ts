@@ -1,3 +1,4 @@
+
 export interface viacep{
     cep: string;
     logradouro: string;
@@ -26,7 +27,7 @@ export interface userResponse{
 }
 
 export interface enderecoInterface{
-    id: string;
+    id: number;
     cep: string;
     nomeBairro:string;
     logradouro: string;
@@ -61,4 +62,11 @@ export interface localizacaoResponse{
     id_localizacao:number;
     nr_longitude:number;
     nr_latitude:number;
+}
+
+export interface localizacaoSalvasResponse {
+    id_localizacao_salva:number;
+    nome:string;
+    id_bairro: enderecoInterface;
+    id_usuario: userResponse;
 }
