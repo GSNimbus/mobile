@@ -53,7 +53,7 @@ export interface paisInterface{
 export interface alertaReponse{
     id_alerta:number;
     ds_risco:string;
-    ds_tipo:string;
+    ds_tipo:number;
     horario_alerta:Date;
     id_localizacao:localizacaoResponse;
 }
@@ -69,4 +69,8 @@ export interface localizacaoSalvasResponse {
     nome:string;
     id_bairro: enderecoInterface;
     id_usuario: userResponse;
+}
+
+export interface localizacaoSalvasAlertaResponse extends localizacaoSalvasResponse {
+    alerta: alertaReponse[];
 }

@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function HeaderVoltar() {
     const nav = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Principal'>>();
     return (
-        <View>
+        <View style={{paddingHorizontal:25}}>
             <Pressable onPress={()=>nav.goBack()}>
                 <Ionicons name="arrow-back" size={36} color={'#fff'}/>
             </Pressable>

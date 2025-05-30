@@ -50,11 +50,11 @@ export default function Alertas() {
     }, [user]);
     
     return (
-        <View style={[styles.container,{paddingTop:30,gap:30}]}>
+        <View style={[styles.container,{paddingTop:50,gap:30}]}>
             <View style={{justifyContent:'flex-start',alignItems:'center',gap:10,flexDirection:'row'}}>
                 <HeaderVoltar />
                 <View style={{width:"60%"}}>
-                    <Text style={[styles.whiteText,{fontSize:32,fontWeight:500,textAlign:'left'}]}>Alertas</Text>
+                    <Text style={[styles.whiteText,{fontSize:24,fontWeight:500,textAlign:'left'}]}>Alertas</Text>
                     <View style={{borderWidth:1,width:"60%",borderColor:"white"}}></View>
                 </View>
             </View>

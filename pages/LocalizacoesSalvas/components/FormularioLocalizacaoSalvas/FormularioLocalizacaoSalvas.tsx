@@ -25,7 +25,11 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
             ToastAndroid.show("Tipo e descrição são obrigatórios.",ToastAndroid.SHORT);
             return;
         }
-        const resEndereco : enderecoInterface  = await postToApiEndereco();
+        const resEndereco  = await postToApiEndereco();
+        if (!resEndereco) {
+            ToastAndroid.show("Erro ao buscar endereço.", ToastAndroid.SHORT);
+            return;
+        }
         const data : localizacaoSalvasResponse = {
             id_localizacao_salva: 0,
             nome: nome,

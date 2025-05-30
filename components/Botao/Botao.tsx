@@ -25,7 +25,7 @@ export default function Botao(props: ButtonAreaProps) {
           color: "white",
           fontSize: sizeChooser[props.size],
           alignSelf: 'center',
-          paddingHorizontal: 72,
+          paddingHorizontal: 32,
           borderRadius: 36,
           paddingVertical: 12
         }, props.additionalStyles]}

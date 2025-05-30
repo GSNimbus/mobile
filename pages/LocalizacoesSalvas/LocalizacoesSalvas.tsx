@@ -2,15 +2,31 @@ import React, { useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import HeaderVoltar from '../../components/HeaderVoltar/HeaderVoltar'
 import { styles } from '../../styles/styles'
-import { alertaReponse, localizacaoSalvasResponse, userResponse } from '../../util/interfaces';
+import { alertaReponse, localizacaoSalvasAlertaResponse, localizacaoSalvasResponse, userResponse } from '../../util/interfaces';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import ModalLocalizacoesSalvas from './components/ModalLocalizacoesSalvas/ModalLocalizacoesSalvas';
+import Header from '../../components/Header/Header';
+import LocalizacaoSalvaModulo from './components/LocalizacaoSalvasModulo/LocalizacaoSalvaModulo';
 
 export default function LocalizacoesSalvas() {
 
-    const [user, setUser] = useState<userResponse>();
+    const [user, setUser] = useState<userResponse>({
+        id: 0,
+        nome: '',
+        email: '',
+        senha: '',
+        endereco:{
+            id: 0,
+            cep: '',
+            nomeBairro: '',
+            logradouro: '',
+            cidade: 0
+        }
+    });
     const [locSalvas, setLocSalvas] = useState<localizacaoSalvasResponse[]>([]);
-    const [alertas, setAlertas] = useState<alertaReponse[]>([]);
+    const [alertas, setAlertas] = useState<localizacaoSalvasAlertaResponse[]>([]);
+    const [show, setShow] = useState<boolean>(false);
 
     useEffect(() => {
         const getUser = async () => {
@@ -43,7 +59,7 @@ export default function LocalizacoesSalvas() {
             }
         }
         getLocSalvas();
-    }, [user]);
+    }, [user,show]);
 
 
     useEffect(() => {
@@ -52,7 +68,15 @@ export default function LocalizacoesSalvas() {
                 const res = await axios.get(`https://nimbus-api.com/api/alertas?bairro=${idLoc}`)
                 if (res.status === 200) {
                     const data : alertaReponse[] = res.data;
-                    setAlertas(()=>[...alertas, ...data]);
+                    for(let loc of locSalvas){
+                        if(loc.id_bairro.id === idLoc){
+                            const locSalvaComAlertas: localizacaoSalvasAlertaResponse = {
+                                ...loc,
+                                alerta: data
+                            }
+                            setAlertas((prev) => [...prev, locSalvaComAlertas]);
+                        }
+                    }
                 } else {
                     console.error('Erro ao buscar previsões:', res.statusText);
                 }
@@ -67,22 +91,24 @@ export default function LocalizacoesSalvas() {
     }, [LocalizacoesSalvas]);
   
     return (
-    <View style={[styles.container,{paddingTop:30,gap:30}]}>
+    <View style={[styles.container,{paddingTop:50,gap:30}]}>
         <View style={{justifyContent:'flex-start',alignItems:'center',gap:10,flexDirection:'row'}}>
             <HeaderVoltar />
-            <View style={{width:"100%"}}>
-                <Text style={[styles.whiteText,{fontSize:32,fontWeight:500,textAlign:'left'}]}>Localizações Salvas</Text>
-                <View style={{borderWidth:1,width:"80%",borderColor:"white"}}></View>
+            <View style={{width:"80%"}}>
+                <Text style={[styles.whiteText,{fontSize:24,fontWeight:500,textAlign:'left'}]}>Localizações Salvas</Text>
+                <View style={{borderWidth:1,width:"85%",borderColor:"white"}}></View>
             </View>
         </View>
         {locSalvas.length>0?(
-            <View>
-
+            <View style={{flex:1, width:'100%'}}>
+                {alertas.map((item, idx) => (
+                    <LocalizacaoSalvaModulo key={idx} {...item} />
+                ))}
             </View>
         ):
         (
-            <View>
-                
+            <View style={{flex:1, width:'100%'}}>
+                <ModalLocalizacoesSalvas user={user} setShowModal={setShow} showModal={show}/>
             </View>
         )
     }
