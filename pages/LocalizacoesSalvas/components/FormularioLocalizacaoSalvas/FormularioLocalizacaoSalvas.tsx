@@ -4,10 +4,11 @@ import { useState } from "react";
 import { styles } from "../../../../styles/styles";
 import Botao from "../../../../components/Botao/Botao";
 import axios from "axios";
-import { alertaReponse, localizacaoSalvasResponse } from "../../../../util/interfaces";
+import { alertaReponse, enderecoInterface, localizacaoSalvasResponse, userResponse, viacep } from "../../../../util/interfaces";
 import { Ionicons } from "@expo/vector-icons";
 
 interface FormularioLocalizacaoSalvasProps {
+    user:userResponse
     showModal: boolean;
     setShowModal: (show: boolean) => void;
 }
@@ -24,25 +25,51 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
             ToastAndroid.show("Tipo e descrição são obrigatórios.",ToastAndroid.SHORT);
             return;
         }
+        const resEndereco : enderecoInterface  = await postToApiEndereco();
         const data : localizacaoSalvasResponse = {
             id_localizacao_salva: 0,
             nome: nome,
-            id_bairro: {
-                
-            },
-            id_usuario:{
-
-            }
+            id_bairro: resEndereco,
+            id_usuario: props.user 
         }
-        const res = await axios.post('https://nimbus-api.com/api/alertas', data);
+        const res = await axios.post('https://nimbus-api.com/api/gploc', data);
         if (res.status === 200) {
-            ToastAndroid.show("Alerta denunciado com sucesso!", ToastAndroid.SHORT);
+            ToastAndroid.show("Pessoa adicionada com sucesso!", ToastAndroid.SHORT);
             setNome('');
-            setNome('');
+            setCep('');
         } else {
             ToastAndroid.show("Erro ao denunciar alerta.", ToastAndroid.SHORT);
         }
+        
     }
+
+    const postToApiEndereco = async () => {
+        try {
+            const viacepRes = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+            if (viacepRes.status !== 200 || viacepRes.data.erro) {
+                ToastAndroid.show('CEP inválido', ToastAndroid.SHORT);
+                return;
+            }
+            const viaCepData : viacep = viacepRes.data;
+            const data : enderecoInterface ={
+                id:0,
+                cep:cep,
+                nomeBairro: viaCepData.bairro,
+                logradouro: viaCepData.logradouro,
+                cidade: 0
+            }
+            const res  = await axios.post('https://api.example.com/endereco', data);
+            if (res.status === 200) {
+                return res.data as enderecoInterface
+            } else {
+                ToastAndroid.show('Erro ao Cadastrar endereço', ToastAndroid.LONG);
+            }
+        } catch (error) {
+            console.error('Erro ao enviar dados para a API:', error);
+            ToastAndroid.show('Erro ao enviar dados para a API', ToastAndroid.LONG);
+        }
+    }
+
     
     return (
         <View style={{padding:20, gap:20}}>
@@ -54,8 +81,8 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
             </View>
                     <Ionicons onPress={()=>{props.setShowModal(!props.showModal)}} name="close-circle" size={36} color="white" style={{marginTop:10}} />
             </View>
-            <InputLabel title="Tipo de desastre" setValue={setTipo} value={tipo} placeholder="Escreva o tipo de desastre" show={false}></InputLabel>
-            <InputLabel title="Descrição" setValue={setDescricao} value={descricao} placeholder="Escreva uma descrição do alerta" show={false}></InputLabel>
+            <InputLabel title="Nome" setValue={setNome} value={nome} placeholder="Escreva o nome da localização" show={false}></InputLabel>
+            <InputLabel title="Cep" setValue={setCep} value={cep} placeholder="Escreva o cep" show={false}></InputLabel>
             <Botao title="Denunciar Alerta" action={() => {postToApiDenuncia}} size="small"></Botao>
         </View>
     )

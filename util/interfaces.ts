@@ -19,7 +19,7 @@ export interface previsaoResponse{
 }
 
 export interface userResponse{
-    id: string;
+    id: number;
     nome: string;
     email: string;
     senha: string;
@@ -31,21 +31,21 @@ export interface enderecoInterface{
     cep: string;
     nomeBairro:string;
     logradouro: string;
-    cidade: cidadeInterface;
+    cidade: number;
 }
 
 export interface cidadeInterface{
-    id: string;
+    id: number;
     nome: string;
-    estado: estadoInterface;
+    estado: number;
 }
 export interface estadoInterface{
-    id: string;
+    id: number;
     nome: string;
-    pais: paisInterface;
+    pais: number;
 }
 export interface paisInterface{
-    id: string;
+    id: number;
     nome: string;
 }
 
