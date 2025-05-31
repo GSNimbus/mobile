@@ -80,3 +80,5 @@ export interface localizacaoSalvasResponse {
 export interface localizacaoSalvasAlertaResponse extends localizacaoSalvasResponse {
     alerta: alertaReponse[];
 }
+
+

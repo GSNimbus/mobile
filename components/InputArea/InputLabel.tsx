@@ -13,8 +13,8 @@ interface InputLabelProps {
   title: string;
   value: string;
   setValue: (value: string) => void;
-  placeholder: string;
-  show: boolean;
+  placeholder?: string;
+  show?: boolean;
   onPress?: () => void;
   secure?: boolean;
   isSearched?: boolean;
