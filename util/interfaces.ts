@@ -24,25 +24,31 @@ export interface userResponse{
     email: string;
     senha: string;
     endereco: enderecoInterface;
+    idLocalizacao: localizacaoResponse;
 }
 
 export interface enderecoInterface{
     id: number;
     cep: string;
-    nomeBairro:string;
+    idBairro:bairroInterface;
     logradouro: string;
-    cidade: number;
+}
+
+export interface bairroInterface{
+    id: number;
+    nome: string;
+    cidade: cidadeInterface;
 }
 
 export interface cidadeInterface{
     id: number;
     nome: string;
-    estado: number;
+    estado: estadoInterface;
 }
 export interface estadoInterface{
     id: number;
     nome: string;
-    pais: number;
+    pais: paisInterface;
 }
 export interface paisInterface{
     id: number;

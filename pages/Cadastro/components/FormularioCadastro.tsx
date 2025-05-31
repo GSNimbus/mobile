@@ -7,6 +7,9 @@ import { RootStackParamList } from '../../../util/types';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { styles } from '../../../styles/styles';
+import * as Location from 'expo-location';
+import getCurrentLocation from '../../../Service/getLocation';
+import { enderecoInterface, userResponse } from '../../../util/interfaces';
 
 export default function FormularioCadastro() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Cadastro'>>();
@@ -15,7 +18,8 @@ export default function FormularioCadastro() {
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [cep, setCep] = useState('');
-
+    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    
     const postToApiCadastro = async () => {
         try {
             if (!nome || !email || !senha || !confirmarSenha || !cep) {
@@ -39,17 +43,47 @@ export default function FormularioCadastro() {
                 ToastAndroid.show('CEP inválido', ToastAndroid.SHORT);
                 return;
             }
+            setLocation(await getCurrentLocation());
+            if (!location) {
+                ToastAndroid.show('Não foi possível obter a localização atual', ToastAndroid.SHORT);
+                return;
+            }
             const viaCepData = viacepRes.data;
-            const res = await axios.post('https://api.example.com/Cadastro', {
+            const { latitude, longitude } = location.coords;
+            const localizacaoResponse = await axios.post('https://api.example.com/Localizacao', {
+                nr_longitude: longitude,
+                nr_latitude: latitude
+            });
+            if (localizacaoResponse.status !== 200) {
+                ToastAndroid.show('Erro ao salvar localização', ToastAndroid.SHORT);
+                return;
+            }
+            const bairroResponse  = await axios.get(`https://api.example.com/Bairro?nome=${viaCepData.bairro}`);
+            if (bairroResponse.status !== 200) {
+                ToastAndroid.show('Erro ao buscar bairro', ToastAndroid.SHORT);
+                return;
+            }
+            const dataEndereco : enderecoInterface ={
+                id: 0, // O ID será gerado pelo banco de dados
+                cep: viaCepData.cep,
+                logradouro: viaCepData.logradouro,
+                idBairro: bairroResponse.data.id 
+            } 
+            const resEndereco = await axios.post('https://api.example.com/Endereco', dataEndereco);
+            if (resEndereco.status !== 200) {
+                ToastAndroid.show('Erro ao salvar endereço', ToastAndroid.SHORT);
+                return;
+            }
+            const dataPost:userResponse = {
+                id: 0, // O ID será gerado pelo banco de dados
                 nome: nome,
                 email: email,
                 senha: senha,
-                cep: cep,
-                logradouro: viaCepData.logradouro,
-                bairro: viaCepData.bairro,
-                cidade: viaCepData.localidade,
-                estado: viaCepData.uf
-            });
+                endereco: resEndereco.data,
+                idLocalizacao: localizacaoResponse.data
+                }
+
+            const res = await axios.post('https://api.example.com/Cadastro', dataPost);
             if (res.status === 200) {
                 ToastAndroid.show('Login realizado com sucesso!', ToastAndroid.SHORT);
                 navigation.navigate('Inicio');

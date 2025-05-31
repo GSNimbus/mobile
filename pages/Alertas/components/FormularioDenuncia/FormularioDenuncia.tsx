@@ -4,8 +4,12 @@ import { useState } from "react";
 import { styles } from "../../../../styles/styles";
 import Botao from "../../../../components/Botao/Botao";
 import axios from "axios";
-import { alertaReponse } from "../../../../util/interfaces";
+import { alertaReponse, localizacaoResponse } from "../../../../util/interfaces";
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from 'expo-location';
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import getCurrentLocation from "../../../../Service/getLocation";
+import postToLocalizacao from "../../../../Service/postToLocalizacao";
 
 interface FormularioDenunciaProps {
     showModal: boolean;
@@ -18,22 +22,26 @@ export default function FormularioDenuncia(props: FormularioDenunciaProps) {
     
     const [tipo, setTipo] = useState<string>('');
     const [descricao, setDescricao] = useState<string>('');
+    const [location, setLocation] = useState<Location.LocationObject | null>(null);
     
     const postToApiDenuncia = async () => {
         if (!tipo || !descricao) {
             ToastAndroid.show("Tipo e descrição são obrigatórios.",ToastAndroid.SHORT);
             return;
         }
+        setLocation(await getCurrentLocation());
+        const dataLoc : localizacaoResponse = await postToLocalizacao(location?.coords);
+        if (!dataLoc) {
+            ToastAndroid.show("Erro ao obter localização atual.", ToastAndroid.SHORT);
+            return;
+        }
         const data : alertaReponse = {
             id_alerta: 0,
-            ds_tipo: tipo,
+            //precisa fazer a tabela de tipo para arrumar o picker
+            ds_tipo: 1,
             ds_risco: descricao,
             horario_alerta: new Date(),
-            id_localizacao:{
-                nr_latitude:0,
-                nr_longitude:0,
-                id_localizacao: 0
-            }
+            id_localizacao: dataLoc
         }
         const res = await axios.post('https://nimbus-api.com/api/alertas', data);
         if (res.status === 200) {
