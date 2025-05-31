@@ -8,4 +8,5 @@ export type RootStackParamList = {
     TrocarInformacoes: undefined;
     LocalizacoesSalvas: undefined;
     AdicionarLocalizacao: undefined;
+    AlterarPerfil : undefined;
 };

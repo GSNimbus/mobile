@@ -7,6 +7,8 @@ import Cadastro from './pages/Cadastro/Cadastro';
 import Principal from './pages/Principal/Principal';
 import Alertas from './pages/Alertas/Alertas';
 import LocalizacoesSalvas from './pages/LocalizacoesSalvas/LocalizacoesSalvas';
+import Perfil from './pages/Perfil/Perfil';
+import AlterarPerfil from './pages/AlterarPerfil/AlterarPerfil';
 
 const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
@@ -26,6 +28,8 @@ export default function App() {
         <Screen name='Principal' component={Principal} />
         <Screen name='Alertas' component={Alertas}/>
         <Screen name='LocalizacoesSalvas' component={LocalizacoesSalvas}/>
+        <Screen name='Perfil' component={Perfil} />
+        <Screen name='AlterarPerfil' component={AlterarPerfil} />
       </Navigator>
     </NavigationContainer>
   );
