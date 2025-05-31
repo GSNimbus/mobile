@@ -59,7 +59,7 @@ export default function Principal() {
         data: new Date(),
     }
     return (
-        <View style={[styles.container,{paddingTop:30,gap:30}]}>
+        <View style={[styles.container,{paddingTop:30,gap:10}]}>
             <Header />
             <View style={{width:'100%',flex:1}}>
                 <Navegacoes />
