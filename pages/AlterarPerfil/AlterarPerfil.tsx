@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useReducer } from "react";
+import React, { useState } from "react";
 import { RootStackParamList } from "../../util/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
@@ -10,40 +10,18 @@ import { styles } from "../../styles/styles";
 import Botao from "../../components/Botao/Botao";
 import InputLabel from "../../components/InputArea/InputLabel";
 
-type FormState = {
-  nome: string;
-  email: string;
-  senha: string;
-  cep: string;
-  pais: string;
-  estado: string;
-  cidade: string;
-};
-
-type Action = { field: keyof FormState; value: string };
-
-const initialState: FormState = {
-  nome: "",
-  email: "",
-  senha: "",
-  cep: "",
-  pais: "",
-  estado: "",
-  cidade: "",
-};
-
-function formReducer(state: FormState, action: Action): FormState {
-  return { ...state, [action.field]: action.value };
-}
-
 const AlterarPerfil = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, "AlterarPerfil">>();
-   const [form, dispatch] = useReducer(formReducer, initialState);
-
-  const handleChange = (field: keyof FormState) => (value: string) =>
-    dispatch({ field, value });
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [cep, setCep] = useState("");
+  const [pais, setPais] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cidade, setCidade] = useState("");
 
   const handleSubmit = () => {
+    const form = { nome, email, senha, cep, pais, estado, cidade };
     console.log("Dados do formulário:", form);
     // Api...
   };
@@ -56,13 +34,13 @@ const AlterarPerfil = () => {
             <Text style={{color: 'white', fontSize: 36}}>Gustavo</Text>
         <ScrollView style={{width: '100%'}}>
             <View style={[{width: '100%', gap: 10, marginVertical: 30}]}>
-                <InputLabel title="Nome completo" value={form.nome} setValue={handleChange('nome')}  />
-                <InputLabel title="Email" value={form.email} setValue={handleChange('email')}   />
-                <InputLabel title="Senha" value={form.senha} setValue={handleChange('senha') } />
-                <InputLabel title="Cep" value={form.cep} setValue={handleChange('cep')}  />
-                <InputLabel title="Pais" value={form.pais} setValue={handleChange('pais')}  />
-                <InputLabel title="Estado" value={form.estado} setValue={handleChange('estado')}  />
-                <InputLabel title="Cidade" value={form.cidade} setValue={handleChange('cidade')}  />
+                <InputLabel title="Nome completo" value={nome} setValue={setNome}  />
+                <InputLabel title="Email" value={email} setValue={setEmail}   />
+                <InputLabel title="Senha" value={senha} setValue={setSenha} />
+                <InputLabel title="Cep" value={cep} setValue={setCep}  />
+                <InputLabel title="Pais" value={pais} setValue={setPais}  />
+                <InputLabel title="Estado" value={estado} setValue={setEstado}  />
+                <InputLabel title="Cidade" value={cidade} setValue={setCidade}  />
             </View>
             <Botao title="Salvar" size="medium" action={handleSubmit} />
         </ScrollView>
