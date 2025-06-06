@@ -1,14 +1,17 @@
 import { createContext, ReactNode, useState } from "react";
-import { userResponse } from "../util/interfaces";
 
 interface ProfileContextData {
-  user: userResponse | null;
-  setUser: React.Dispatch<React.SetStateAction<userResponse | null>>;
+  userId: number | null;
+  setUserId: React.Dispatch<React.SetStateAction<number | null>>;
+  token: string | null;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const AuthContext = createContext<ProfileContextData>({
-    user : null, 
-    setUser: () => {},
+    userId : null,
+    setUserId: () => {},
+    token: null,
+    setToken: () => {},
 });
 
 type ProfileProviderProps = {
@@ -16,10 +19,11 @@ type ProfileProviderProps = {
 };
 
 export function ProfileContext({children} : ProfileProviderProps) {
-  const [user, setUser] = useState<userResponse | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ userId, setUserId, token, setToken }}>
       {children}
     </AuthContext.Provider>
   );

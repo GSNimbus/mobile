@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Pressable, Text, ToastAndroid, View } from 'react-native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import InputLabel from '../../../components/InputArea/InputLabel'
@@ -8,11 +8,15 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { styles } from '../../../styles/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../../../Service/ProfileContext';
 
 export default function FormularioLogin() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Login'>>();
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const { setToken, setUserId } = useContext(AuthContext);
+
+    const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API;
 
     const postToApiLogin = async () => {
         try {
@@ -24,16 +28,25 @@ export default function FormularioLogin() {
                 ToastAndroid.show('Por favor, insira um email válido', ToastAndroid.SHORT);
                 return;
             }
-            const res = await axios.post('https://api.example.com/login', {
+            const res = await axios.post(`${API_URL}/autenticacao/login`, {
                 email: email,
-                senha: senha
+                password: senha
             });
             if (res.status === 200) {
                 ToastAndroid.show('Login realizado com sucesso!', ToastAndroid.SHORT);
                 const data = res.data;
                 await AsyncStorage.setItem('token', data.token);
-                await AsyncStorage.setItem('user', JSON.stringify(data.user));
-                navigation.navigate('Inicio');
+                if (data.user && data.user.id) { 
+                    await AsyncStorage.setItem('userId', data.user.id.toString());
+                    setUserId(data.user.id);
+                } else if (data.id) {
+                    await AsyncStorage.setItem('userId', data.id.toString());
+                    setUserId(data.id);
+                } else {
+                    console.warn("ID do usuário não encontrado na resposta da API de login");
+                }
+                setToken(data.token);
+                navigation.navigate('Principal');
             } else {
                 ToastAndroid.show('Erro ao realizar login', ToastAndroid.LONG);
             }

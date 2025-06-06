@@ -16,7 +16,9 @@ export default function Botao(props: ButtonAreaProps) {
     large: 28,
   };
   return (
-    <Pressable>
+    <Pressable
+      onPress={() => props.action?.()}
+    >
       <Text
         style={[{
           backgroundColor: "#5C7FA2",
@@ -29,7 +31,6 @@ export default function Botao(props: ButtonAreaProps) {
           borderRadius: 36,
           paddingVertical: 12
         }, props.additionalStyles]}
-        onPress={() => props.action ? props.action() : props.actionWithParameters?(props.infoForActionWithParameters) : '' }
       >
         {props.title}
       </Text>
