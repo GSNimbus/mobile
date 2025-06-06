@@ -17,10 +17,7 @@ import AuthorizedCaller from '../../Service/AuthorizedCaller'
 import usePostToLocalizacao from '../../Service/postToLocalizacao'
 
 export default function Principal() {
-  const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API
-
-  // obtém userId do contexto de autenticação
-  const { userId, token } = useContext(AuthContext)
+  const { userId } = useContext(AuthContext)
   const [previsao, setPrevisao] = useState<previsaoResponse | null>(null)
   const [location, setLocation] = useState<LocationObject | null>(null)
   const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([])
@@ -28,8 +25,6 @@ export default function Principal() {
   const { Navigator, Screen } = createNativeStackNavigator<RootStackParamList>()
   const authorizedRequest = AuthorizedCaller();
   const postToLocalizacao = usePostToLocalizacao();
-
-  console.log(token)
 
   // pega a localização atual do usuário
   useEffect(() => {
