@@ -34,6 +34,11 @@ export interface userResponse{
     password: string;
 }
 
+export interface TokenResponse {
+    token : string;
+    idUsuario : number;
+}
+
 export interface UserInput {
     username: string;
     email: string;

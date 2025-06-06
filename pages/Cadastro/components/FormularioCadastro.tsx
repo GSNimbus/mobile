@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Pressable, Text, ToastAndroid, View } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InputLabel from "../../../components/InputArea/InputLabel";
@@ -19,10 +19,14 @@ import {
   userResponse,
   ViacepData,
 } from "../../../util/interfaces";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from "../../../Service/ProfileContext";
+import { TokenResponse } from "../../../util/interfaces";
 
 export default function FormularioCadastro() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Cadastro">>();
+  const { setToken, setUserId } = useContext(AuthContext);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -106,20 +110,24 @@ export default function FormularioCadastro() {
           `${API_URL}/autenticacao/login`,
           loginRequest
         );
-        console.log("cavalo")
-        if (tokenRequest.status != 200) {
+        if (tokenRequest.status !== 200) {
           ToastAndroid.show("Usuário ou senha inválido", ToastAndroid.SHORT);
+          return;
         }
-        console.log("cavalo 2")
+        const tokenResponse: TokenResponse = tokenRequest.data;
+        // store token and userId in AsyncStorage and context
+        await AsyncStorage.setItem('token', tokenResponse.token);
+        await AsyncStorage.setItem('userId', tokenResponse.idUsuario.toString());
+        setToken(tokenResponse.token);
+        setUserId(tokenResponse.idUsuario);
+        console.log("Login bem-sucedido e contexto atualizado", tokenResponse);
 
-        const token = tokenRequest.data;
-        console.log(token)
         const enderecoUsuario = await axios.post(
           `${API_URL}/endereco/todo`,
           endereco,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${tokenResponse.token}`,
             },
           }
         );
@@ -148,7 +156,7 @@ export default function FormularioCadastro() {
           grupoLocalizacao,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${tokenResponse.token}`,
             },
           }
         );

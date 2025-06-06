@@ -15,6 +15,8 @@ import { NavigationContainer } from '@react-navigation/native'
 
 export default function Principal() {
 
+    const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API;
+
     const [user, setUser] = useState<userResponse>();
     const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([]);
 
@@ -39,7 +41,7 @@ export default function Principal() {
     useEffect(() => {
         const getPrevisoes = async () => {
             try {
-                const res = await axios.get(`https://nimbus-api.com/api/previsoes?cidade=${user?.endereco.cidade.nome}`)
+                const res = await axios.get(`${API_URL}/api/previsoes?cidade=${user?.endereco.cidade.nome}`)
                 if (res.status === 200) {
                     const data : previsaoResponse[] = res.data;
                     setPrevisoes(()=>data);
