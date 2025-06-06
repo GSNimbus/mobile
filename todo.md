@@ -1,0 +1,2 @@
+- arrumar localizaçoessalvas.tsx
+- todos os localizações salvas

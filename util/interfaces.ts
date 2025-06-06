@@ -14,9 +14,17 @@ export interface ViacepData{
 }
 
 export interface previsaoResponse{
-    graus: string;
-    cidade: string;
-    data: Date;
+    id:number;
+    time: string;
+    temerature2M: number;
+    precipitation: number;
+    weatherCode:number;
+    windSpeed10M: number;
+    windGusts10M: number;
+    relativeHumidity2M: number;
+    apparentTemperature: number;
+    surfacePressure: number;
+    idBairro: bairroInterface;
 }
 
 export interface userResponse{
@@ -93,11 +101,10 @@ export interface paisInterface{
 
 
 export interface alertaReponse{
-    id_alerta:number;
-    ds_risco:string;
-    ds_tipo:number;
-    horario_alerta:Date;
-    id_localizacao:localizacaoResponse;
+    id:number;
+    risco:string;
+    tipo:"INDETERMINADO" | "BAIXO_RISCO" | "MEDIO_RISCO" | "ALTO_RISCO" | "SEM_RISCO_CHUVA"; 
+    idBairro:bairroInterface;
 }
 
 export interface localizacaoResponse{
