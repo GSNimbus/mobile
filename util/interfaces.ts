@@ -1,11 +1,12 @@
 
-export interface viacep{
+export interface ViacepData{
     cep: string;
     logradouro: string;
     complemento: string;
     bairro: string;
     localidade: string;
     uf: string;
+    estado : string;
     ibge: string;
     gia: string;
     ddd: string;
@@ -20,39 +21,74 @@ export interface previsaoResponse{
 
 export interface userResponse{
     id: number;
-    nome: string;
+    username: string;
     email: string;
-    senha: string;
-    endereco: enderecoInterface;
-    idLocalizacao: localizacaoResponse;
+    password: string;
+}
+
+export interface UserInput {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export interface LoginInput {
+    email: string;
+    password: string;
+}
+
+export interface GrupoLocalizacaoInterface {
+    id : number;
+    nome : string;
+    endereco : enderecoInterface;
+    usuario : userResponse;
+}
+
+export interface GrupoLocalizacaoInput {
+    nome : string;
+    idEndereco : number;
+    idUsuario : number;
 }
 
 export interface enderecoInterface{
-    id: number;
+    idEndereco: number;
     cep: string;
     idBairro:bairroInterface;
-    logradouro: string;
+    nmLogradouro: string;
+    nrLogradouro: number;
 }
+
+export interface EnderecoInput {
+    cep : string;
+    nomeLogradouro: string;
+    numLogradouro: number;
+    bairro : string;
+    cidade : string;
+    estado : string;
+    pais : string;
+}
+
 
 export interface bairroInterface{
     id: number;
     nome: string;
-    cidade: cidadeInterface;
+    idCidade: cidadeInterface;
+    idLocalizacao : localizacaoResponse
 }
 
 export interface cidadeInterface{
-    id: number;
-    nome: string;
-    estado: estadoInterface;
+    idCidade: number;
+    nmCidade: string;
+    idEstado: estadoInterface;
 }
 export interface estadoInterface{
-    id: number;
-    nome: string;
-    pais: paisInterface;
+    idEstado: number;
+    nmEstado: string;
+    idPais: paisInterface;
 }
 export interface paisInterface{
-    id: number;
-    nome: string;
+    idPais: number;
+    nmPais: string;
 }
 
 
@@ -65,9 +101,9 @@ export interface alertaReponse{
 }
 
 export interface localizacaoResponse{
-    id_localizacao:number;
-    nr_longitude:number;
-    nr_latitude:number;
+    id:number;
+    longitude:number;
+    latitude:number;
 }
 
 export interface localizacaoSalvasResponse {

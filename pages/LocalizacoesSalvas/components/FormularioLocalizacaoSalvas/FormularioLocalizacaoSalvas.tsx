@@ -4,7 +4,7 @@ import { useState } from "react";
 import { styles } from "../../../../styles/styles";
 import Botao from "../../../../components/Botao/Botao";
 import axios from "axios";
-import { alertaReponse, enderecoInterface, localizacaoSalvasResponse, userResponse, viacep } from "../../../../util/interfaces";
+import { alertaReponse, enderecoInterface, localizacaoSalvasResponse, userResponse, ViacepData } from "../../../../util/interfaces";
 import { Ionicons } from "@expo/vector-icons";
 
 interface FormularioLocalizacaoSalvasProps {
@@ -54,7 +54,7 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
                 ToastAndroid.show('CEP inválido', ToastAndroid.SHORT);
                 return;
             }
-            const viaCepData : viacep = viacepRes.data;
+            const viaCepData : ViacepData = viacepRes.data;
             const data : enderecoInterface ={
                 id:0,
                 cep:cep,

@@ -9,17 +9,56 @@ import Alertas from './pages/Alertas/Alertas';
 import LocalizacoesSalvas from './pages/LocalizacoesSalvas/LocalizacoesSalvas';
 import Perfil from './pages/Perfil/Perfil';
 import AlterarPerfil from './pages/AlterarPerfil/AlterarPerfil';
+import { useContext, useEffect, useState } from 'react'; // Adicionado
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Adicionado
+import { AuthContext, ProfileContext } from './Service/ProfileContext'; // Adicionado ProfileContext (Provider)
+import { ActivityIndicator, View } from 'react-native'; // Adicionado
 
 const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
-export default function App() {
+// Envolve o App com o ProfileContext Provider
+export default function AppWrapper() {
+  return (
+    <ProfileContext>
+      <App />
+    </ProfileContext>
+  );
+}
 
-  // fazer a verificação de token para encaminhamento de rotas
+function App() {
+  const { token, setToken, setUserId } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedUserIdString = await AsyncStorage.getItem('userId');
+        
+        if (storedToken && storedUserIdString) {
+          setToken(storedToken);
+          setUserId(parseInt(storedUserIdString, 10));
+        }
+      } catch (e) {
+        console.error("Falha ao carregar o token do armazenamento", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkToken();
+  }, [setToken, setUserId]);
+
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
-      <Navigator initialRouteName='Principal' screenOptions={{
+      <Navigator initialRouteName={token ? 'Principal' : 'Inicio'} screenOptions={{
         headerShown:false,
       }}>
         <Screen name='Inicio' component={Inicio} />
