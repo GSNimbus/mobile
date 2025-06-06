@@ -13,16 +13,9 @@ export default function LocalizacoesSalvas() {
 
     const [user, setUser] = useState<userResponse>({
         id: 0,
-        nome: '',
+        username: '',
         email: '',
-        senha: '',
-        endereco:{
-            id: 0,
-            cep: '',
-            nomeBairro: '',
-            logradouro: '',
-            cidade: 0
-        }
+        password: '',
     });
     const [locSalvas, setLocSalvas] = useState<localizacaoSalvasResponse[]>([]);
     const [alertas, setAlertas] = useState<localizacaoSalvasAlertaResponse[]>([]);

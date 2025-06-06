@@ -7,23 +7,29 @@ export default function AlertaModulo(props: ListRenderItemInfo<alertaReponse>) {
     
     const [color, setColor] = useState<number>(0);
 
-    if (props.item.id_alerta === 3) {
+    if (props.item.tipo === "ALTO_RISCO") {
         setColor(0xFF000020); // Red
     }
-    else if (props.item.id_alerta === 2) {
+    else if (props.item.tipo === "MEDIO_RISCO") {
         setColor(0xFFFF0020); // Yellow
     }
-    else if (props.item.id_alerta === 1) {
+    else if (props.item.tipo === "BAIXO_RISCO") {
         setColor(0x00FF0020); // Green
+    }
+    else if (props.item.tipo === "INDETERMINADO") {
+        setColor(0x0000FF20); // Blue
+    }
+    else {
+        setColor(0x00000020); // Gray
     }
 
 
 
     return (
         <View>
-            <Text style={{fontSize:24,fontWeight:700}}>{props.item.id_alerta}</Text>
-            <Text style={{fontSize:18}}>Descrição: {props.item.ds_risco}</Text>
-            <Text style={{fontSize:18}}>Data: {props.item.horario_alerta.toLocaleDateString()}</Text>
+            <Text style={{fontSize:24,fontWeight:700}}>{props.item.risco}</Text>
+            <Text style={{fontSize:18}}>Descrição: {props.item.risco}</Text>
+            <Text style={{fontSize:18}}>Bairro: {props.item.idBairro.nome}</Text>
         </View>
     )
 }
