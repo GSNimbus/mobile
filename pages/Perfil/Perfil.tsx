@@ -15,47 +15,63 @@ import { AuthContext } from "../../Service/ProfileContext";
 import { enderecoInterface, userResponse } from "../../util/interfaces";
 
 const Perfil = () => {
-
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList, 'Perfil'>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "Perfil">>();
   const authorizedRequest = AuthorizedCaller();
-  const { userId } = useContext(AuthContext)
-  const [user, setUser] = useState<userResponse | null>(null)
-  
-   useEffect(() => {
-      if (!userId) return;
-  
-      (async () => {
-        try {
-          const usuario = await authorizedRequest<userResponse>(
-            "GET",
-            `/usuario/${userId}`
-          );
-          setUser(usuario);
-          
-          const endereco = await authorizedRequest<enderecoInterface>(
-            "GET",
-            `/endereco/primeiro/${userId}`
-          )
-        } catch (e) {
-          console.error("Erro ao buscar previsões:", e);
-        }
-      })();
-    }, [location, userId, authorizedRequest]);
+  const { userId } = useContext(AuthContext);
+  const [user, setUser] = useState<userResponse | null>(null);
+  const [endereco, setEndereco] = useState<enderecoInterface | null>(null);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    (async () => {
+      try {
+        const usuario = await authorizedRequest<userResponse>(
+          "GET",
+          `/usuario/${userId}`
+        );
+        setUser(usuario);
+        console.log("cavalo 1000");
+        const endereco = await authorizedRequest<enderecoInterface>(
+          "GET",
+          `/grupo-localizacao/casa/usuario/${userId}`
+        );
+        setEndereco(endereco);
+        console.log("cavalo 1001");
+      } catch (e) {
+        console.error("Erro ao buscar previsões:", e);
+      }
+    })();
+  }, [userId, authorizedRequest]);
 
   return (
     <View style={[styles.container, { paddingTop: 50 }]}>
-      <Header /> 
+      <Header />
       <View style={styles.container_center}>
-        <MaterialCommunityIcons name="account-circle-outline" size={150} color="white" />
-        <Text style={{color: 'white', fontSize: 36}}>{}</Text>
-        <View style={[{width: '100%', gap: 10, marginVertical: 30}]}>
-            <UserField  titulo="Nome completo" valor="Gustavo Dias" /> 
-            <UserField  titulo="Email" valor="gustavodiasdsc@gmail.com" /> 
-            <UserField  titulo="Senha" valor="********" isPassword /> 
-            <UserField  titulo="Endereço" valor="Rua dos Prefeitos, 345, Atibaia - São Paulo" /> 
-            <UserField  titulo="Cep" valor="09997-390" /> 
+        <MaterialCommunityIcons
+          name="account-circle-outline"
+          size={150}
+          color="white"
+        />
+        <Text style={{ color: "white", fontSize: 36 }}>{user?.username ?? ''}</Text>
+        <View style={[{ width: "100%", gap: 10, marginVertical: 30 }]}>
+          <UserField titulo="Nome completo" valor={user?.username ?? ""} />
+          <UserField titulo="Email" valor={user?.email ?? ""} />
+          <UserField titulo="Senha" valor={user?.password ?? ""} isPassword />
+          <UserField
+            titulo="Endereço"
+            valor={`${endereco?.nmLogradouro}, ${endereco?.nrLogradouro}, ${
+              endereco?.idBairro?.nome ?? ""
+            }`}
+          />
+          <UserField titulo="Cep" valor={endereco?.cep ?? ''} /> 
         </View>
-        <Botao title="Alterar dados" size="medium" action={() => navigation.navigate('AlterarPerfil')} /> 
+        <Botao
+          title="Alterar dados"
+          size="medium"
+          action={() => navigation.navigate("AlterarPerfil")}
+        />
       </View>
     </View>
   );
