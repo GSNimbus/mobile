@@ -13,9 +13,9 @@ export default function PrevisãoPrincipal(props: propsPrevisaoPrincipal) {
         <View style={{flex:1, gap:30,alignItems:'center',flexDirection:'column'}}>
             <View style={{alignItems:'center',justifyContent:'center'}}>
                 <Ionicons name="cloud-outline" size={220} color="#fff" />
-                <Text style={{color:'#fff',fontSize:24}}>{props.previsao.cidade}</Text>
-                <Text style={{fontSize:56,color:'#fff',fontWeight:700}}>{props.previsao.graus}°</Text>
-                <Text style={{color:'#fff',fontSize:28}}>{new Date(props.previsao.data).toLocaleDateString()}</Text>
+                <Text style={{color:'#fff',fontSize:24}}>{props.previsao.idBairro.idCidade.nmCidade}</Text>
+                <Text style={{fontSize:56,color:'#fff',fontWeight:700}}>{props.previsao.temperature2M}°</Text>
+                <Text style={{color:'#fff',fontSize:28}}>{new Date(props.previsao.time).toLocaleDateString()}</Text>
             </View>
         </View>
     )
