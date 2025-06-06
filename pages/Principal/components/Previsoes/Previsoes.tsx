@@ -10,7 +10,7 @@ interface PrevisoesProps {
 }
 
 
-export default function Previsoes() {
+export default function Previsoes({previsoes} : PrevisoesProps) {
 
 
     const [show, setShow] = useState(false);

@@ -16,7 +16,7 @@ export interface ViacepData{
 export interface previsaoResponse{
     id:number;
     time: string;
-    temerature2M: number;
+    temperature2M: number;
     precipitation: number;
     weatherCode:number;
     windSpeed10M: number;
