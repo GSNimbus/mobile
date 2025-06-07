@@ -30,6 +30,13 @@ export default function Principal() {
   const [location, setLocation] = useState<LocationObject | null>(null);
   const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([]);
 
+  // obtém userId do contexto de autenticação
+  const { userId, token } = useContext(AuthContext)
+  const [previsao, setPrevisao] = useState<previsaoResponse | null>(null)
+  const [location, setLocation] = useState<LocationObject | null>(null)
+  const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([])
+  const { Navigator, Screen } = createNativeStackNavigator<RootStackParamList>()
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Inicio">>();
   const authorizedRequest = AuthorizedCaller();
@@ -56,10 +63,9 @@ export default function Principal() {
 
     (async () => {
       try {
-        const bairro: bairroInterface | null = await postToLocalizacao(
-          location.coords
-        );
-        console.log(bairro);
+        const bairro: bairroInterface | null = await postToLocalizacao(location.coords);
+        console.log(bairro)
+
         if (!bairro) return;
         const previsao = await authorizedRequest<previsaoResponse>(
           "GET",
@@ -80,9 +86,11 @@ export default function Principal() {
 
     (async () => {
       try {
-        const gruposLocalizacao = await authorizedRequest<
-          GrupoLocalizacaoInterface[]
-        >("GET", `/grupo-localizacao/usuario/${userId}`);
+        const gruposLocalizacao = await authorizedRequest<GrupoLocalizacaoInterface[]>(
+          "GET",
+          `/grupo-localizacao/usuario/${userId}`
+        );
+
 
         const previsoesArray = await Promise.all(
           gruposLocalizacao.map(async (grupo) => {
@@ -111,6 +119,7 @@ export default function Principal() {
             );
           })
         );
+
 
         setPrevisoes(
           previsoesArray.filter((p): p is previsaoResponse => Boolean(p))

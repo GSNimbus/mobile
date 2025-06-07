@@ -9,4 +9,5 @@ export type RootStackParamList = {
     LocalizacoesSalvas: undefined;
     AdicionarLocalizacao: undefined;
     AlterarPerfil : undefined;
+    SingleAlert : { id: number; nome:string; };
 };

@@ -4,47 +4,57 @@ import { useState } from "react";
 import { styles } from "../../../../styles/styles";
 import Botao from "../../../../components/Botao/Botao";
 import axios from "axios";
-import { alertaReponse, enderecoInterface, localizacaoSalvasResponse, userResponse, ViacepData } from "../../../../util/interfaces";
+import { alertaReponse, EnderecoInput, enderecoInterface, GrupoLocalizacaoInput, GrupoLocalizacaoInterface, userResponse, ViacepData } from "../../../../util/interfaces";
 import { Ionicons } from "@expo/vector-icons";
+import AuthorizedCaller from "../../../../Service/AuthorizedCaller";
 
 interface FormularioLocalizacaoSalvasProps {
-    user:userResponse
+    user: number | null;
     showModal: boolean;
     setShowModal: (show: boolean) => void;
 }
 
 
 export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacaoSalvasProps) {
-    
-    
+
+
     const [nome, setNome] = useState<string>('');
     const [cep, setCep] = useState<string>('');
-    
-    const postToApiDenuncia = async () => {
+    const [numLogradouro, setNumLogradouro] = useState("");
+    const authorizedRequest = AuthorizedCaller();
+
+    const postToGpLoc = async () => {
         if (!nome || !cep) {
-            ToastAndroid.show("Tipo e descrição são obrigatórios.",ToastAndroid.SHORT);
+            ToastAndroid.show("Tipo e descrição são obrigatórios.", ToastAndroid.SHORT);
             return;
         }
-        const resEndereco  = await postToApiEndereco();
+        if (cep.length != 8) {
+            ToastAndroid.show("CEP inválido.", ToastAndroid.SHORT);
+            return;
+        }
+        const resEndereco = await postToApiEndereco();
         if (!resEndereco) {
             ToastAndroid.show("Erro ao buscar endereço.", ToastAndroid.SHORT);
             return;
         }
-        const data : localizacaoSalvasResponse = {
-            id_localizacao_salva: 0,
+        const data: GrupoLocalizacaoInput = {
             nome: nome,
-            id_bairro: resEndereco,
-            id_usuario: props.user 
+            idEndereco: resEndereco.idEndereco,
+            idUsuario: props.user ? props.user : 0
         }
-        const res = await axios.post('https://nimbus-api.com/api/gploc', data);
-        if (res.status === 200) {
-            ToastAndroid.show("Pessoa adicionada com sucesso!", ToastAndroid.SHORT);
+        const res = await authorizedRequest<GrupoLocalizacaoInput>(
+            'POST',
+            '/grupo-localizacao',
+            data
+        );
+        if (res) {
+            ToastAndroid.show("Grupo adicionado com sucesso!", ToastAndroid.SHORT);
             setNome('');
             setCep('');
         } else {
             ToastAndroid.show("Erro ao denunciar alerta.", ToastAndroid.SHORT);
         }
-        
+
     }
 
     const postToApiEndereco = async () => {
@@ -54,17 +64,24 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
                 ToastAndroid.show('CEP inválido', ToastAndroid.SHORT);
                 return;
             }
-            const viaCepData : ViacepData = viacepRes.data;
-            const data : enderecoInterface ={
-                id:0,
-                cep:cep,
-                nomeBairro: viaCepData.bairro,
-                logradouro: viaCepData.logradouro,
-                cidade: 0
-            }
-            const res  = await axios.post('https://api.example.com/endereco', data);
-            if (res.status === 200) {
-                return res.data as enderecoInterface
+            const viaCepData: ViacepData = viacepRes.data;
+            const endereco: EnderecoInput = {
+                bairro: viaCepData.bairro,
+                cep,
+                cidade: viaCepData.localidade,
+                estado: viaCepData.estado,
+                numLogradouro: parseInt(numLogradouro),
+                nomeLogradouro: viaCepData.logradouro,
+                pais: "Brasil",
+            };
+            console.log("Dados do endereço:", endereco);
+            const data = await authorizedRequest<enderecoInterface>(
+                'POST',
+                '/endereco/todo',
+                endereco
+            );
+            if (data) {
+                return data;
             } else {
                 ToastAndroid.show('Erro ao Cadastrar endereço', ToastAndroid.LONG);
             }
@@ -74,20 +91,22 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
         }
     }
 
-    
+
     return (
-        <View style={{padding:20, gap:20}}>
-            <View style={{flexDirection:'row',gap:10, justifyContent:'space-between'}}>
-                <View style={{width:"50%", borderRadius:10,padding:10}}>
-                <Text style={[styles.whiteText,{fontSize:32,fontWeight:500,textAlign:'left'}]}>Alertas</Text>
-                <View style={{borderWidth:1,width:"100%",borderColor:"white"}}></View>
-                
-            </View>
-                    <Ionicons onPress={()=>{props.setShowModal(!props.showModal)}} name="close-circle" size={36} color="white" style={{marginTop:10}} />
+        <View style={{ padding: 20, gap: 20 }}>
+            <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'space-between' }}>
+                <View style={{ width: "50%", borderRadius: 10, padding: 10 }}>
+                    <Text style={[styles.whiteText, { fontSize: 32, fontWeight: 500, textAlign: 'left' }]}>Alertas</Text>
+                    <View style={{ borderWidth: 1, width: "100%", borderColor: "white" }}></View>
+
+                </View>
+                <Ionicons onPress={() => { props.setShowModal(!props.showModal) }} name="close-circle" size={36} color="white" style={{ marginTop: 10 }} />
             </View>
             <InputLabel title="Nome" setValue={setNome} value={nome} placeholder="Escreva o nome da localização" show={false}></InputLabel>
             <InputLabel title="Cep" setValue={setCep} value={cep} placeholder="Escreva o cep" show={false}></InputLabel>
-            <Botao title="Denunciar Alerta" action={() => {postToApiDenuncia}} size="small"></Botao>
-        </View>
-    )
+            <InputLabel title="Número de logradouro" value={numLogradouro} setValue={(e) => setNumLogradouro(e)} placeholder="Digite o número de casa" show={false}/>
+                <Botao title="Adicionar localização" action={() => { postToGpLoc() }} size="small"></Botao>
+            </View>
+            )
+            
 }

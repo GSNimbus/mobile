@@ -8,17 +8,17 @@ import { userResponse } from "../../../../util/interfaces";
 
 
 interface ModalLocalizacoesSalvas {
-    user:userResponse;
+    user:number | null;
     showModal: boolean;
     setShowModal: (show: boolean) => void;
+
 }
 
 export default function ModalLocalizacoesSalvas(props: ModalLocalizacoesSalvas) {
   return (
-    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1}}>
         <View>
-            <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '90%',height:'60%', justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 10 }}>Adicionar localização</Text>
+            <View style={{ padding: 20, borderRadius: 10, width: '90%',height:'100%', justifyContent: 'center', alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Botao title="Adicionar localização" action={() => props.setShowModal(!props.showModal)} size="small"/>
                 </View>

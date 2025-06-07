@@ -13,6 +13,7 @@ import { useContext, useEffect, useState } from 'react'; // Adicionado
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Adicionado
 import { AuthContext, ProfileContext } from './Service/ProfileContext'; // Adicionado ProfileContext (Provider)
 import { ActivityIndicator, View } from 'react-native'; // Adicionado
+import SingleAlert from './pages/SingleAlert/SingleAlert';
 
 const {Navigator,Screen} = createNativeStackNavigator<RootStackParamList>();
 
@@ -69,6 +70,7 @@ function App() {
         <Screen name='LocalizacoesSalvas' component={LocalizacoesSalvas}/>
         <Screen name='Perfil' component={Perfil} />
         <Screen name='AlterarPerfil' component={AlterarPerfil} />
+        <Screen name='SingleAlert' component={SingleAlert} />
       </Navigator>
     </NavigationContainer>
   );

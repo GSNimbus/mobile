@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Text, View } from 'react-native'
 import { alertaReponse, userResponse } from '../../util/interfaces';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,48 +6,37 @@ import axios from 'axios';
 import { styles } from '../../styles/styles';
 import Header from '../../components/Header/Header';
 import ListaAlerta from './components/ListaAlerta/ListaAlerta';
-import ModalDenunciar from './components/ModalDenunciarAlerta/ModalDenunciar';
 import HeaderVoltar from '../../components/HeaderVoltar/HeaderVoltar';
+import AuthorizedCaller from '../../Service/AuthorizedCaller';
+import { AuthContext } from '../../Service/ProfileContext';
 
 export default function Alertas() {
     
-    const [user, setUser] = useState<userResponse>();
+
     const [alertas, setAlertas] = useState<alertaReponse[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
-    
-
-    useEffect(() => {
-        const getUser = async () => {
-            try{
-                const res  = await AsyncStorage.getItem('user');
-                if(res){
-                    const userData : userResponse = JSON.parse(res);
-                    setUser(()=>userData);
-                }
-            }catch(e){
-                console.log('Erro ao buscar usuário:', e);
-            }
-        }
-        
-        getUser();
-    }, [])
-
+    const authorizedRequest = AuthorizedCaller();
+    const { userId } = useContext(AuthContext);
+   
     useEffect(() => {
         const getAlertas = async () => {
             try {
-                const res = await axios.get(`https://nimbus-api.com/api/alertas?bairro=${user?.endereco.nomeBairro}`)
-                if (res.status === 200) {
-                    const data : alertaReponse[] = res.data;
-                    setAlertas(()=>data);
+                const res = await authorizedRequest<alertaReponse[]>(
+                    'GET',
+                    `/alerta/usuario/${userId}` 
+                );
+                if (res) {
+                    
+                    setAlertas(()=>res);
                 } else {
-                    console.error('Erro ao buscar previsões:', res.statusText);
+                    console.error('Erro ao buscar alertas');
                 }
             } catch (error) {
-                console.error('Erro ao buscar previsões:', error);
+                console.error('Erro ao buscar alertas:', error);
             }
         }
         getAlertas();
-    }, [user]);
+    }, [authorizedRequest,alertas, showModal]);
     
     return (
         <View style={[styles.container,{paddingTop:50,gap:30}]}>
@@ -64,7 +53,9 @@ export default function Alertas() {
                 </View>
                 ):(
                 <View style={{width:'100%', flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <ModalDenunciar showModal={showModal} setShowModal={setShowModal}/>
+                    <Text style={[styles.whiteText, { fontSize: 18, textAlign: 'center' }]}>
+                        Não há alertas disponíveis no momento.
+                    </Text>
                 </View>
                 )}
             
