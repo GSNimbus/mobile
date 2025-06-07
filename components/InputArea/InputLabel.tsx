@@ -6,7 +6,7 @@ import {
   Pressable,
   KeyboardType,
 } from "react-native";
-import { styles } from "../../styles/styles"
+import { styles } from "../../styles/styles";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 interface InputLabelProps {
@@ -19,22 +19,43 @@ interface InputLabelProps {
   secure?: boolean;
   isSearched?: boolean;
   clearSearch?: () => void;
+  keyboardType?: KeyboardType;
+  inputDisabled?: boolean;
 }
 
 export default function InputLabel(props: InputLabelProps) {
   return (
     <View>
-      <Text style={[styles.TextInput, {fontSize: 20, paddingVertical: 5}]}>{props.title}</Text>
-      <View style={[styles.Input, { justifyContent: "space-between" }]}>
+      <Text style={[styles.TextInput, { fontSize: 20, paddingVertical: 5 }]}>
+        {props.title}
+      </Text>
+      <View
+        style={[
+          styles.Input,
+          {
+            justifyContent: "space-between",
+            backgroundColor: props.inputDisabled ? "#7b8899" : "#ffffff",
+          },
+        ]}
+      >
         <TextInput
+          editable={!props.inputDisabled}
           secureTextEntry={props.secure}
           style={{ flex: 1 }}
+          keyboardType={props.keyboardType}
           placeholder={props.placeholder}
           placeholderTextColor={"#8B8B8B"}
           value={props.value}
           autoCapitalize="none"
-          onChangeText={(e) => props.setValue(e)}
-        ></TextInput>
+          onChangeText={(text) => {
+            if (props.keyboardType === "numeric") {
+              // mantém só dígitos
+              props.setValue(text.replace(/[^0-9]/g, ""));
+            } else {
+              props.setValue(text);
+            }
+          }}
+        />
         {props.show ? (
           <Pressable
             style={{
@@ -42,8 +63,8 @@ export default function InputLabel(props: InputLabelProps) {
               justifyContent: "center",
               flexDirection: "row",
               gap: 10,
-              minWidth : props.isSearched ? 60 : 30,
-              paddingHorizontal: 4
+              minWidth: props.isSearched ? 60 : 30,
+              paddingHorizontal: 4,
             }}
             onPress={props.onPress}
           >
