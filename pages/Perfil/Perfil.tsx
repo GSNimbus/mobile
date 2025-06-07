@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { styles } from "../../styles/styles";
 import HeaderVoltar from "../../components/HeaderVoltar/HeaderVoltar";
@@ -18,7 +18,7 @@ const Perfil = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Perfil">>();
   const authorizedRequest = AuthorizedCaller();
-  const { userId } = useContext(AuthContext);
+  const { userId, setUserId, setToken } = useContext(AuthContext);
   const [user, setUser] = useState<userResponse | null>(null);
   const [endereco, setEndereco] = useState<enderecoInterface | null>(null);
 
@@ -45,10 +45,19 @@ const Perfil = () => {
     })();
   }, [userId, authorizedRequest]);
 
+  const handleLogout = () => {
+    setUserId(null);
+    setToken(null);
+    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+  };
+
   return (
     <View style={[styles.container, { paddingTop: 50 }]}>
       <Header />
-      <View style={styles.container_center}>
+      <ScrollView
+        contentContainerStyle={styles.container_center}
+        showsVerticalScrollIndicator={false}
+      >
         <MaterialCommunityIcons
           name="account-circle-outline"
           size={150}
@@ -67,12 +76,20 @@ const Perfil = () => {
           />
           <UserField titulo="Cep" valor={endereco?.cep ?? ''} /> 
         </View>
-        <Botao
-          title="Alterar dados"
-          size="medium"
-          action={() => navigation.navigate("AlterarPerfil")}
-        />
-      </View>
+        <View style={{flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center'}}> 
+          <Botao
+            title="Alterar dados"
+            size="small"
+            action={() => navigation.navigate("AlterarPerfil")}
+          />
+            <Botao
+              title="Logout"
+              size="small"
+              additionalStyles={{ backgroundColor: '#D9534F', borderColor: '#D9534F' }}
+              action={handleLogout}
+            />
+        </View>
+      </ScrollView>
     </View>
   );
 };

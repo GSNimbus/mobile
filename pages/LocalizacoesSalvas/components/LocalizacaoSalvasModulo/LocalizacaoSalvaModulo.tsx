@@ -21,17 +21,10 @@ export default function LocalizacaoSalvaModulo(props: localizacaoSalvaModuloProp
     const [showModal, setShowModal] = useState(false);
     const apagarGrupo = async () => {
         try {
-            const res = await authorizedRequest<localizacaoSalvasAlertaResponse>(
-                'DELETE',
-                `grupo-localizacao/${props.loc.id}`
-
-            );
-            if (res) {
-                console.log("Grupo apagado com sucesso");
-                nav.navigate('Principal')
-            } else {
-                console.error("Erro ao apagar grupo");
-            }
+            // API retorna 204 no-content para DELETE bem sucedido
+            await authorizedRequest<void>('DELETE', `/grupo-localizacao/${props.loc.id}`);
+            console.log("Grupo apagado com sucesso");
+            nav.navigate('Principal');
         } catch (error) {
             console.error('Erro ao apagar grupo:', error);
         }

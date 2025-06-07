@@ -65,8 +65,12 @@ export default function FormularioLogin() {
         ToastAndroid.show("Erro ao realizar login", ToastAndroid.LONG);
       }
     } catch (error) {
-      console.error("Erro ao enviar dados para a API:", error);
-      ToastAndroid.show("Erro ao enviar dados para a API", ToastAndroid.LONG);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        ToastAndroid.show("Usuário ou senha incorreta", ToastAndroid.LONG);
+      } else {
+        console.error("Erro ao enviar dados para a API:", error);
+        ToastAndroid.show("Erro ao enviar dados para a API", ToastAndroid.LONG);
+      }
     }
   };
 

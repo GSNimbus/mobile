@@ -31,7 +31,7 @@ export default function FormularioMudaGp(props: FormularioLocalizacaoSalvasProps
         }
         const res = await authorizedRequest<GrupoLocalizacaoInterface>(
             'PUT',
-            `grupo-localizacao/${props.idGrupo}`,
+            `/grupo-localizacao/${props.idGrupo}`,
             data
         );
         if (res) {

@@ -12,7 +12,10 @@ import InputLabel from "../../components/InputArea/InputLabel";
 import AuthorizedCaller from "../../Service/AuthorizedCaller";
 import { AuthContext } from "../../Service/ProfileContext";
 import {
+  bairroInterface,
+  cidadeInterface,
   enderecoInterface,
+  estadoInterface,
   userResponse,
   ViacepData,
 } from "../../util/interfaces";
@@ -36,6 +39,7 @@ const AlterarPerfil = () => {
   const [logradouro, setLogradouro] = useState("");
   const [numLogradouro, setNumLogradouro] = useState("");
   const [disable, setDisable] = useState<boolean>(true);
+  const [endereco, setEndereco] = useState<enderecoInterface>();
 
   useEffect(() => {
     if (!userId) return;
@@ -50,16 +54,17 @@ const AlterarPerfil = () => {
         setEmail(usuario.email);
         setSenha(usuario.password);
         console.log("cavalo 1000");
-        const endereco = await authorizedRequest<enderecoInterface>(
+        const enderecoResponse = await authorizedRequest<enderecoInterface>(
           "GET",
           `/grupo-localizacao/casa/usuario/${userId}`
         );
-        setEstado(endereco.idBairro.idCidade.idEstado.nmEstado);
-        setCidade(endereco.idBairro.idCidade.nmCidade);
-        setBairro(endereco.idBairro.nome);
-        setLogradouro(endereco.nmLogradouro);
-        setNumLogradouro(endereco.nrLogradouro.toString());
-        setCep(endereco.cep.toString());
+        setEndereco(enderecoResponse);
+        setEstado(enderecoResponse.idBairro.idCidade.idEstado.nmEstado);
+        setCidade(enderecoResponse.idBairro.idCidade.nmCidade);
+        setBairro(enderecoResponse.idBairro.nome);
+        setLogradouro(enderecoResponse.nmLogradouro);
+        setNumLogradouro(enderecoResponse.nrLogradouro.toString());
+        setCep(enderecoResponse.cep.toString());
         console.log("cavalo 1001");
       } catch (e) {
         console.error("Erro ao buscar previsões:", e);
@@ -75,10 +80,10 @@ const AlterarPerfil = () => {
       return;
     }
     const viaCepData: ViacepData = viacepRes.data;
-    setEstado(viaCepData.estado)
-    setCidade(viaCepData.localidade)
-    setBairro(viaCepData.bairro)
-    setLogradouro(viaCepData.logradouro)
+    setEstado(viaCepData.estado);
+    setCidade(viaCepData.localidade);
+    setBairro(viaCepData.bairro);
+    setLogradouro(viaCepData.logradouro);
     setDisable(false);
   };
 
@@ -88,16 +93,58 @@ const AlterarPerfil = () => {
     setDisable(true);
     if (cep.length !== 8) return;
     const handler = setTimeout(() => {
-      ToastAndroid.show('Preenchendo informações de endereço adicionais', ToastAndroid.LONG)
+      ToastAndroid.show(
+        "Preenchendo informações de endereço adicionais",
+        ToastAndroid.LONG
+      );
       chamarViacep();
     }, 5000);
     return () => clearTimeout(handler);
   }, [cep]);
 
-  const handleSubmit = () => {
-    const form = { nome, email, senha, cep, pais : "Brasil", estado, cidade };
-    console.log("Dados do formulário:", form);
+  const handleSubmit = async () => {
+    const form = { nome, email, senha, cep, pais: "Brasil", estado, cidade };
+    const userUpdateObj = {
+      username: nome,
+      email,
+      password: senha,
+    };
+    const estadoUpdateObj = {
+      nome: estado,
+      idPais: endereco!.idBairro.idCidade.idEstado.idPais.idPais,
+    };
+    const cidadeUpdateObj = {
+      nome: cidade,
+      idEstado: endereco!.idBairro.idCidade.idEstado.idEstado,
+    };
+    const bairroUpdateObj = {
+      nome : bairro,
+      idCidade : endereco!.idBairro.idCidade.idCidade
+    }
+    const enderecoUpdateObj = {
+      logradouro: logradouro,
+      numLogradouro,
+      bairro: endereco!.idBairro.id,
+      cep: cep
+    }
+    await authorizedRequest<userResponse>("PUT", `/usuario/${userId}`, userUpdateObj);
+    await authorizedRequest<estadoInterface>("PUT", `/estado/${endereco!.idBairro.idCidade.idEstado.idEstado}`, estadoUpdateObj);
+    await authorizedRequest<cidadeInterface>("PUT", `/cidade/${endereco!.idBairro.idCidade.idCidade}`, cidadeUpdateObj);
+    await authorizedRequest<bairroInterface>("PUT", `/bairro/${endereco!.idBairro.id}`, bairroUpdateObj);
+    await authorizedRequest<enderecoInterface>("PUT", `/endereco/${endereco!.idEndereco}`, enderecoUpdateObj);
+     ToastAndroid.show("Dados atualizados com sucesso!", ToastAndroid.LONG)
+     navigation.navigate("Perfil")
+
+     console.log("Dados do formulário:", form);
   };
+
+  const salvarNaApi = async () => {
+    try {
+      await handleSubmit();
+    } catch (error) {
+      console.error("Erro ao salvar", error)
+    }
+  }
 
   return (
     <View style={[styles.container, { paddingTop: 50 }]}>
@@ -120,14 +167,14 @@ const AlterarPerfil = () => {
               setValue={setCep}
               keyboardType="numeric"
             />
-             <InputLabel
+            <InputLabel
               title="Número do logradouro"
               value={numLogradouro}
               setValue={setNumLogradouro}
               inputDisabled={disable}
               keyboardType="numeric"
             />
-             <InputLabel
+            <InputLabel
               title="Logradouro"
               value={logradouro}
               setValue={setLogradouro}
@@ -145,15 +192,14 @@ const AlterarPerfil = () => {
               setValue={setCidade}
               inputDisabled={true}
             />
-             <InputLabel
+            <InputLabel
               title="Estado"
               value={estado}
               setValue={setEstado}
               inputDisabled={true}
             />
-           
           </View>
-          <Botao title="Salvar" size="medium" action={handleSubmit} />
+          <Botao title="Salvar" size="medium" action={salvarNaApi} />
         </ScrollView>
       </View>
     </View>
