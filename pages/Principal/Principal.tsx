@@ -1,23 +1,34 @@
-import { View } from 'react-native'
-import { styles } from '../../styles/styles'
-import Header from '../../components/Header/Header'
-import { useEffect, useState, useContext } from 'react'
-import axios from 'axios'
-import { bairroInterface, GrupoLocalizacaoInterface, previsaoResponse } from '../../util/interfaces'
-import { AuthContext } from '../../Service/ProfileContext'
-import PrevisãoPrincipal from './components/PrevisaoPrincipal/PrevisaoPrincipal'
-import Previsoes from './components/Previsoes/Previsoes'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../util/types'
-import Navegacoes from './components/Navegacoes/Navegacoes'
-import getCurrentLocation from '../../Service/getLocation'
-import type { LocationObject } from 'expo-location'
-import postToLocalizacao from '../../Service/postToLocalizacao'
-import AuthorizedCaller from '../../Service/AuthorizedCaller'
-import usePostToLocalizacao from '../../Service/postToLocalizacao'
+import { View } from "react-native";
+import { styles } from "../../styles/styles";
+import Header from "../../components/Header/Header";
+import { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import {
+  bairroInterface,
+  GrupoLocalizacaoInterface,
+  previsaoResponse,
+} from "../../util/interfaces";
+import { AuthContext } from "../../Service/ProfileContext";
+import PrevisãoPrincipal from "./components/PrevisaoPrincipal/PrevisaoPrincipal";
+import Previsoes from "./components/Previsoes/Previsoes";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../util/types";
+import Navegacoes from "./components/Navegacoes/Navegacoes";
+import getCurrentLocation from "../../Service/getLocation";
+import type { LocationObject } from "expo-location";
+import postToLocalizacao from "../../Service/postToLocalizacao";
+import AuthorizedCaller from "../../Service/AuthorizedCaller";
+import usePostToLocalizacao from "../../Service/postToLocalizacao";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Principal() {
-  const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API
+  const { userId } = useContext(AuthContext);
+  const [previsao, setPrevisao] = useState<previsaoResponse | null>(null);
+  const [location, setLocation] = useState<LocationObject | null>(null);
+  const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([]);
 
   // obtém userId do contexto de autenticação
   const { userId, token } = useContext(AuthContext)
@@ -25,27 +36,27 @@ export default function Principal() {
   const [location, setLocation] = useState<LocationObject | null>(null)
   const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([])
   const { Navigator, Screen } = createNativeStackNavigator<RootStackParamList>()
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "Inicio">>();
   const authorizedRequest = AuthorizedCaller();
   const postToLocalizacao = usePostToLocalizacao();
 
-  console.log(token)
-
-  // pega a localização atual do usuário
   useEffect(() => {
     const loadLocation = async () => {
       try {
-        const loc = await getCurrentLocation()
+        const loc = await getCurrentLocation();
         if (loc) {
-          setLocation(loc)
+          setLocation(loc);
         } else {
-          console.warn('Permissão de localização negada ou indisponível')
+          console.warn("Permissão de localização negada ou indisponível");
         }
       } catch (e) {
-        console.error('Erro ao obter localização:', e)
+        console.error("Erro ao obter localização:", e);
       }
-    }
-    loadLocation()
-  }, [])
+    };
+    loadLocation();
+  }, []);
 
   useEffect(() => {
     if (!location || userId === null) return;
@@ -54,13 +65,17 @@ export default function Principal() {
       try {
         const bairro: bairroInterface | null = await postToLocalizacao(location.coords);
         console.log(bairro)
+
         if (!bairro) return;
         const previsao = await authorizedRequest<previsaoResponse>(
           "GET",
           `/previsao/bairro/${bairro.id}`
         );
         setPrevisao(previsao);
-      } catch (e) {
+      } catch (e: any) {
+        if (e.response?.status === 403) {
+          navigation.navigate("Inicio");
+        }
         console.error("Erro ao buscar previsões:", e);
       }
     })();
@@ -75,6 +90,7 @@ export default function Principal() {
           "GET",
           `/grupo-localizacao/usuario/${userId}`
         );
+
 
         const previsoesArray = await Promise.all(
           gruposLocalizacao.map(async (grupo) => {
@@ -104,8 +120,14 @@ export default function Principal() {
           })
         );
 
-        setPrevisoes(previsoesArray.filter((p): p is previsaoResponse => Boolean(p)));
-      } catch (error) {
+
+        setPrevisoes(
+          previsoesArray.filter((p): p is previsaoResponse => Boolean(p))
+        );
+      } catch (error: any) {
+        if (error.response?.status === 403) {
+          navigation.navigate("Inicio");
+        }
         console.error("Erro ao buscar previsões:", error);
       }
     })();
@@ -114,13 +136,19 @@ export default function Principal() {
   return (
     <View style={[styles.container, { paddingTop: 30, gap: 10 }]}>
       <Header />
-      <View style={{ width: '100%', flex: 1 }}>
+      <View style={{ width: "100%", flex: 1 }}>
         <Navegacoes />
         {previsao && <PrevisãoPrincipal previsao={previsao} />}
       </View>
-      <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          width: "100%",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Previsoes previsoes={previsoes} />
       </View>
     </View>
-  )
+  );
 }
