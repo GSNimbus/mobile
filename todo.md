@@ -1,2 +1,3 @@
 - arrumar localizaçoessalvas.tsx
 - todos os localizações salvas
+- tirar a denuncia de alerta

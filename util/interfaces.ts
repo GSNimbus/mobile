@@ -118,14 +118,8 @@ export interface localizacaoResponse{
     latitude:number;
 }
 
-export interface localizacaoSalvasResponse {
-    id_localizacao_salva:number;
-    nome:string;
-    id_bairro: enderecoInterface;
-    id_usuario: userResponse;
-}
 
-export interface localizacaoSalvasAlertaResponse extends localizacaoSalvasResponse {
+export interface localizacaoSalvasAlertaResponse extends GrupoLocalizacaoInterface {
     alerta: alertaReponse[];
 }
 
