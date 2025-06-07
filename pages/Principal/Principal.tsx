@@ -23,19 +23,16 @@ import postToLocalizacao from "../../Service/postToLocalizacao";
 import AuthorizedCaller from "../../Service/AuthorizedCaller";
 import usePostToLocalizacao from "../../Service/postToLocalizacao";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Principal() {
-  const { userId } = useContext(AuthContext);
-  const [previsao, setPrevisao] = useState<previsaoResponse | null>(null);
-  const [location, setLocation] = useState<LocationObject | null>(null);
-  const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([]);
+  
 
   // obtém userId do contexto de autenticação
-  const { userId, token } = useContext(AuthContext)
+  const { userId, token, setUserId, setToken } = useContext(AuthContext)
   const [previsao, setPrevisao] = useState<previsaoResponse | null>(null)
   const [location, setLocation] = useState<LocationObject | null>(null)
   const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([])
-  const { Navigator, Screen } = createNativeStackNavigator<RootStackParamList>()
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList, "Inicio">>();
@@ -43,6 +40,17 @@ export default function Principal() {
   const postToLocalizacao = usePostToLocalizacao();
 
   useEffect(() => {
+    const clean = async () => {
+      try {
+        await AsyncStorage.clear()
+        setUserId(null)
+        setToken(null)
+        navigation.navigate('Inicio')
+      } catch (error) {
+        console.log("erro: ", error)
+      }
+    }
+
     const loadLocation = async () => {
       try {
         const loc = await getCurrentLocation();
@@ -55,6 +63,7 @@ export default function Principal() {
         console.error("Erro ao obter localização:", e);
       }
     };
+    // clean();
     loadLocation();
   }, []);
 
