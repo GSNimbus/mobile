@@ -71,6 +71,20 @@ export interface enderecoInterface{
     nrLogradouro: number;
 }
 
+/*
+public class CasaGrupoProjection {
+    private Endereco endereco;
+    private String nome;
+    private Long idGrupoLocalizacao;
+}
+*/
+
+export interface CasaGrupoResponse {
+    endereco : enderecoInterface;
+    nome : string;
+    idGrupoLocalizacao : number;
+}
+
 export interface EnderecoInput {
     cep : string;
     nomeLogradouro: string;

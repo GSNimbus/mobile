@@ -95,8 +95,8 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
     return (
         <View style={{ padding: 20, gap: 20 }}>
             <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'space-between' }}>
-                <View style={{ width: "50%", borderRadius: 10, padding: 10 }}>
-                    <Text style={[styles.whiteText, { fontSize: 32, fontWeight: 500, textAlign: 'left' }]}>Alertas</Text>
+                <View style={{ width: "90%", borderRadius: 10, padding: 10 }}>
+                    <Text style={[styles.whiteText, { fontSize: 26, fontWeight: 500, textAlign: 'left' }]}>Grupos de localização</Text>
                     <View style={{ borderWidth: 1, width: "100%", borderColor: "white" }}></View>
 
                 </View>
@@ -105,7 +105,7 @@ export default function FormularioLocalizacaoSalvas(props: FormularioLocalizacao
             <InputLabel title="Nome" setValue={setNome} value={nome} placeholder="Escreva o nome da localização" show={false}></InputLabel>
             <InputLabel title="Cep" setValue={setCep} value={cep} placeholder="Escreva o cep" show={false}></InputLabel>
             <InputLabel title="Número de logradouro" value={numLogradouro} setValue={(e) => setNumLogradouro(e)} placeholder="Digite o número de casa" show={false}/>
-                <Botao title="Adicionar localização" action={() => { postToGpLoc() }} size="small"></Botao>
+                <Botao title="Adicionar grupo" action={() => { postToGpLoc() }} size="small"></Botao>
             </View>
             )
             

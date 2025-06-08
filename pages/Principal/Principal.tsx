@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { styles } from "../../styles/styles";
 import Header from "../../components/Header/Header";
 import { useEffect, useState, useContext } from "react";
@@ -28,29 +28,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Principal() {
   
 
-  // obtém userId do contexto de autenticação
-  const { userId, token, setUserId, setToken } = useContext(AuthContext)
+  const { userId, setUserId, setToken } = useContext(AuthContext)
   const [previsao, setPrevisao] = useState<previsaoResponse | null>(null)
+  const [loadingPrevisao, setLoadingPrevisao] = useState(false)
   const [location, setLocation] = useState<LocationObject | null>(null)
-  const [previsoes, setPrevisoes] = useState<previsaoResponse[]>([])
 
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, "Inicio">>();
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "Principal">>();
   const authorizedRequest = AuthorizedCaller();
   const postToLocalizacao = usePostToLocalizacao();
 
   useEffect(() => {
-    const clean = async () => {
-      try {
-        await AsyncStorage.clear()
-        setUserId(null)
-        setToken(null)
-        navigation.navigate('Inicio')
-      } catch (error) {
-        console.log("erro: ", error)
-      }
-    }
-
+    console.log('Cheguei no Principal!')
     const loadLocation = async () => {
       try {
         const loc = await getCurrentLocation();
@@ -63,7 +52,6 @@ export default function Principal() {
         console.error("Erro ao obter localização:", e);
       }
     };
-    // clean();
     loadLocation();
   }, []);
 
@@ -71,6 +59,7 @@ export default function Principal() {
     if (!location || userId === null) return;
 
     (async () => {
+      setLoadingPrevisao(true)
       try {
         const bairro: bairroInterface | null = await postToLocalizacao(location.coords);
         console.log(bairro)
@@ -82,72 +71,24 @@ export default function Principal() {
         );
         setPrevisao(previsao);
       } catch (e: any) {
-        if (e.response?.status === 403) {
-          navigation.navigate("Inicio");
-        }
         console.error("Erro ao buscar previsões:", e);
+      } finally {
+        setLoadingPrevisao(false)
       }
     })();
   }, [location, userId, postToLocalizacao, authorizedRequest]);
 
-  useEffect(() => {
-    if (userId === null) return;
-
-    (async () => {
-      try {
-        const gruposLocalizacao = await authorizedRequest<GrupoLocalizacaoInterface[]>(
-          "GET",
-          `/grupo-localizacao/usuario/${userId}`
-        );
-
-
-        const previsoesArray = await Promise.all(
-          gruposLocalizacao.map(async (grupo) => {
-            const idBairro = grupo.endereco.idBairro?.id;
-            console.log("debug idBairro:", idBairro);
-
-            if (!idBairro) {
-              // retry até encontrar um id válido (cuidado com loops infinitos)
-              let tentativas = 0;
-              while (!idBairro && tentativas < 3) {
-                tentativas++;
-                await new Promise((r) => setTimeout(r, 500));
-                console.log(`retry #${tentativas}`);
-                // supondo que você pudesse atualizar `grupo` aqui...
-              }
-            }
-
-            if (!idBairro) {
-              console.warn("idBairro continua indefinido, pulando...");
-              return null;
-            }
-
-            return await authorizedRequest<previsaoResponse>(
-              "GET",
-              `/previsao/bairro/${idBairro}`
-            );
-          })
-        );
-
-
-        setPrevisoes(
-          previsoesArray.filter((p): p is previsaoResponse => Boolean(p))
-        );
-      } catch (error: any) {
-        if (error.response?.status === 403) {
-          navigation.navigate("Inicio");
-        }
-        console.error("Erro ao buscar previsões:", error);
-      }
-    })();
-  }, [userId, authorizedRequest]);
-
+ 
   return (
-    <View style={[styles.container, { paddingTop: 30, gap: 10 }]}>
+    <View style={[styles.container, { paddingTop: 30, gap: 10 }]}> 
       <Header />
       <View style={{ width: "100%", flex: 1 }}>
         <Navegacoes />
-        {previsao && <PrevisãoPrincipal previsao={previsao} />}
+        { (loadingPrevisao || !previsao) ? (
+          <ActivityIndicator size="large" color="#fff" />
+        ) : (
+          <PrevisãoPrincipal previsao={previsao} />
+        )}
       </View>
       <View
         style={{
@@ -156,7 +97,7 @@ export default function Principal() {
           justifyContent: "center",
         }}
       >
-        <Previsoes previsoes={previsoes} />
+        <Previsoes  />
       </View>
     </View>
   );

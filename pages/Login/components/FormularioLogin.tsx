@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Pressable, Text, ToastAndroid, View } from "react-native";
+import { Alert, Platform, Pressable, Text, ToastAndroid, View } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InputLabel from "../../../components/InputArea/InputLabel";
 import Botao from "../../../components/Botao/Botao";
@@ -42,31 +42,36 @@ export default function FormularioLogin() {
         { email, password: senha }
       );
 
+      if (res.status === 401){
+        if (Platform.OS ===  'android'){
+          ToastAndroid.show(`O ${email} já está sendo usado!`, ToastAndroid.LONG);
+        } else {
+          Alert.alert(`O ${email} já está sendo usado!`)
+        }
+      }
+
+
       if (res.status === 200) {
         const tokenResponse = res.data;
         ToastAndroid.show("Login realizado com sucesso!", ToastAndroid.SHORT);
 
         // Armazena token e userId
         await AsyncStorage.setItem("token", tokenResponse.token);
-        const userId =
-          tokenResponse.idUsuario ?? tokenResponse.idUsuario ?? null;
-        if (userId !== null) {
-          await AsyncStorage.setItem("userId", userId.toString());
-          setUserId(userId);
-        } else {
-          console.warn(
-            "ID do usuário não encontrado na resposta da API de login"
-          );
-        }
-
+        await AsyncStorage.setItem("userId", tokenResponse.idUsuario.toString());
+        setUserId(tokenResponse.idUsuario);
         setToken(tokenResponse.token);
+        console.log("Estou aqui")
         navigation.navigate("Principal");
       } else {
         ToastAndroid.show("Erro ao realizar login", ToastAndroid.LONG);
       }
     } catch (error) {
-      console.error("Erro ao enviar dados para a API:", error);
-      ToastAndroid.show("Erro ao enviar dados para a API", ToastAndroid.LONG);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        ToastAndroid.show("Usuário ou senha incorreta", ToastAndroid.LONG);
+      } else {
+        console.error("Erro ao enviar dados para a API:", error);
+        ToastAndroid.show("Erro ao enviar dados para a API", ToastAndroid.LONG);
+      }
     }
   };
 

@@ -1,7 +1,11 @@
 // Implementa função de requisição autorizada genérica
-import axios, { AxiosRequestConfig, Method, AxiosResponse } from 'axios';
-import { useContext, useCallback } from 'react';
-import { AuthContext } from './ProfileContext';
+import axios, { AxiosRequestConfig, Method, AxiosResponse } from "axios";
+import { useContext, useCallback } from "react";
+import { AuthContext } from "./ProfileContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RootStackParamList } from "../util/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 
 const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API;
 
@@ -16,8 +20,10 @@ const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API;
  */
 export default function AuthorizedCaller() {
   const { token, setToken, setUserId } = useContext(AuthContext);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "Principal">>();
   return useCallback(
-    async <T = any>(
+    async <T = any,>(
       method: Method,
       route: string,
       data?: any,
@@ -26,7 +32,9 @@ export default function AuthorizedCaller() {
       if (!token) {
         setToken(null);
         setUserId(null);
-        return Promise.reject(new Error('Sem token, faça login novamente'));
+        await AsyncStorage.clear();
+        navigation.navigate("Inicio");
+        // return Promise.reject(new Error('Sem token, faça login novamente'));
       }
       const url = `${API_URL}${route}`;
       const headers: Record<string, string> = {
@@ -46,8 +54,9 @@ export default function AuthorizedCaller() {
         if (status === 401 || status === 403) {
           setToken(null);
           setUserId(null);
+          await AsyncStorage.clear();
+          navigation.navigate("Inicio");
         }
-        console.error(`Erro na requisição ${method} ${url}:`, error);
         throw error;
       }
     },

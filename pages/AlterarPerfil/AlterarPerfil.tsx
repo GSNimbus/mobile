@@ -12,7 +12,14 @@ import InputLabel from "../../components/InputArea/InputLabel";
 import AuthorizedCaller from "../../Service/AuthorizedCaller";
 import { AuthContext } from "../../Service/ProfileContext";
 import {
+  bairroInterface,
+  CasaGrupoResponse,
+  cidadeInterface,
+  EnderecoInput,
   enderecoInterface,
+  estadoInterface,
+  GrupoLocalizacaoInput,
+  GrupoLocalizacaoInterface,
   userResponse,
   ViacepData,
 } from "../../util/interfaces";
@@ -36,6 +43,9 @@ const AlterarPerfil = () => {
   const [logradouro, setLogradouro] = useState("");
   const [numLogradouro, setNumLogradouro] = useState("");
   const [disable, setDisable] = useState<boolean>(true);
+  const [endereco, setEndereco] = useState<enderecoInterface>();
+  const [nomeGrupo, setNomeGrupo] = useState("")
+  const [idGrupoLocalizacao, setIdGrupoLocalizacao] = useState<number>(0)
 
   useEffect(() => {
     if (!userId) return;
@@ -50,16 +60,20 @@ const AlterarPerfil = () => {
         setEmail(usuario.email);
         setSenha(usuario.password);
         console.log("cavalo 1000");
-        const endereco = await authorizedRequest<enderecoInterface>(
+        const casa = await authorizedRequest<CasaGrupoResponse>(
           "GET",
           `/grupo-localizacao/casa/usuario/${userId}`
         );
-        setEstado(endereco.idBairro.idCidade.idEstado.nmEstado);
-        setCidade(endereco.idBairro.idCidade.nmCidade);
-        setBairro(endereco.idBairro.nome);
-        setLogradouro(endereco.nmLogradouro);
-        setNumLogradouro(endereco.nrLogradouro.toString());
-        setCep(endereco.cep.toString());
+        console.log(`Casa: ${casa}`)
+        setEndereco(casa.endereco);
+        setEstado(casa.endereco.idBairro.idCidade.idEstado.nmEstado);
+        setCidade(casa.endereco.idBairro.idCidade.nmCidade);
+        setBairro(casa.endereco.idBairro.nome);
+        setLogradouro(casa.endereco.nmLogradouro);
+        setNumLogradouro(casa.endereco.nrLogradouro.toString());
+        setCep(casa.endereco.cep.toString());
+        setIdGrupoLocalizacao(casa.idGrupoLocalizacao)
+        setNomeGrupo(casa.nome)
         console.log("cavalo 1001");
       } catch (e) {
         console.error("Erro ao buscar previsões:", e);
@@ -75,29 +89,71 @@ const AlterarPerfil = () => {
       return;
     }
     const viaCepData: ViacepData = viacepRes.data;
-    setEstado(viaCepData.estado)
-    setCidade(viaCepData.localidade)
-    setBairro(viaCepData.bairro)
-    setLogradouro(viaCepData.logradouro)
+    setEstado(viaCepData.estado);
+    setCidade(viaCepData.localidade);
+    setBairro(viaCepData.bairro);
+    setLogradouro(viaCepData.logradouro);
     setDisable(false);
   };
 
-  // Debounce CEP input: trigger chamarViacep 500ms after user stops typing when CEP has 8 digits
   useEffect(() => {
-    // disable number input until address is fetched
     setDisable(true);
     if (cep.length !== 8) return;
     const handler = setTimeout(() => {
-      ToastAndroid.show('Preenchendo informações de endereço adicionais', ToastAndroid.LONG)
+      ToastAndroid.show(
+        "Preenchendo informações de endereço adicionais",
+        ToastAndroid.LONG
+      );
       chamarViacep();
     }, 5000);
     return () => clearTimeout(handler);
   }, [cep]);
 
-  const handleSubmit = () => {
-    const form = { nome, email, senha, cep, pais : "Brasil", estado, cidade };
-    console.log("Dados do formulário:", form);
+  const handleSubmit = async () => {
+    const form = { nome, email, senha, cep, pais: "Brasil", estado, cidade };
+    
+    const enderecoUpdateObj : EnderecoInput = {
+      numLogradouro : parseFloat(numLogradouro),
+      bairro,
+      cep,
+      nomeLogradouro: logradouro,
+      cidade,
+      estado,
+      pais : "Brasil"
+    }
+
+   
+  
+  console.log(enderecoUpdateObj)
+  console.log("Cheguei aqui")  
+  const enderecoResponse = await authorizedRequest<enderecoInterface>("POST", `/endereco/todo/`, enderecoUpdateObj);
+  console.log(enderecoResponse)  
+  
+  const grupoLocalizacaoUpdateObj : GrupoLocalizacaoInput = {
+      idUsuario: userId!,
+      idEndereco: enderecoResponse.idEndereco,
+      nome: nomeGrupo
+    }
+    
+    await authorizedRequest<GrupoLocalizacaoInterface>(
+      "PUT",
+      `grupo-localizacao/${idGrupoLocalizacao}`,
+      grupoLocalizacaoUpdateObj
+    ) 
+
+    ToastAndroid.show("Dados atualizados com sucesso!", ToastAndroid.LONG)
+     navigation.navigate("Perfil")
+
+     console.log("Dados do formulário:", form);
   };
+
+  const salvarNaApi = async () => {
+    try {
+      await handleSubmit();
+    } catch (error) {
+      console.error("Erro ao salvar", error)
+    }
+  }
 
   return (
     <View style={[styles.container, { paddingTop: 50 }]}>
@@ -120,14 +176,14 @@ const AlterarPerfil = () => {
               setValue={setCep}
               keyboardType="numeric"
             />
-             <InputLabel
+            <InputLabel
               title="Número do logradouro"
               value={numLogradouro}
               setValue={setNumLogradouro}
               inputDisabled={disable}
               keyboardType="numeric"
             />
-             <InputLabel
+            <InputLabel
               title="Logradouro"
               value={logradouro}
               setValue={setLogradouro}
@@ -145,15 +201,14 @@ const AlterarPerfil = () => {
               setValue={setCidade}
               inputDisabled={true}
             />
-             <InputLabel
+            <InputLabel
               title="Estado"
               value={estado}
               setValue={setEstado}
               inputDisabled={true}
             />
-           
           </View>
-          <Botao title="Salvar" size="medium" action={handleSubmit} />
+          <Botao title="Salvar" size="medium" action={salvarNaApi} />
         </ScrollView>
       </View>
     </View>
