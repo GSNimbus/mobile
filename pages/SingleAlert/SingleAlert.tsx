@@ -17,11 +17,14 @@ export default function SingleAlert() {
     useEffect(() => {
         const getAlertas = async () => {
             try {
+                console.log("To aqui")
+                console.log(id)
                 const res = await authorizedRequest<alertaReponse[]>(
                     'GET',
                     `/alerta/bairro/${id}`
                 );
                 if (res) {
+                    console.log(res)
                     setAlertas(res);
                 } else {
                     console.error('Erro ao buscar alerta');

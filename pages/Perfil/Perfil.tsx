@@ -87,11 +87,11 @@ const Perfil = () => {
           <UserField titulo="Cep" valor={endereco?.cep ?? ''} /> 
         </View>
         <View style={{flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center'}}> 
-          <Botao
+          {/* <Botao
             title="Alterar dados"
             size="small"
             action={() => navigation.navigate("AlterarPerfil")}
-          />
+          /> */}
             <Botao
               title="Logout"
               size="small"
