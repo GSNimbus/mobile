@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { Pressable, Text, ToastAndroid, View } from "react-native";
+import { Alert, Platform, Pressable, Text, ToastAndroid, View } from "react-native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import InputLabel from "../../../components/InputArea/InputLabel";
 import Botao from "../../../components/Botao/Botao";
@@ -41,6 +41,15 @@ export default function FormularioLogin() {
         `${API_URL}/autenticacao/login`,
         { email, password: senha }
       );
+
+      if (res.status === 401){
+        if (Platform.OS ===  'android'){
+          ToastAndroid.show(`O ${email} já está sendo usado!`, ToastAndroid.LONG);
+        } else {
+          Alert.alert(`O ${email} já está sendo usado!`)
+        }
+      }
+
 
       if (res.status === 200) {
         const tokenResponse = res.data;

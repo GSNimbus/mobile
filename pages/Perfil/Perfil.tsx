@@ -13,6 +13,7 @@ import { RootStackParamList } from "../../util/types";
 import AuthorizedCaller from "../../Service/AuthorizedCaller";
 import { AuthContext } from "../../Service/ProfileContext";
 import { enderecoInterface, userResponse } from "../../util/interfaces";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Perfil = () => {
   const navigation =
@@ -45,9 +46,18 @@ const Perfil = () => {
     })();
   }, [userId, authorizedRequest]);
 
-  const handleLogout = () => {
+  const limparUso = async () => {
     setUserId(null);
     setToken(null);
+    await AsyncStorage.clear()
+  }
+
+  const handleLogout = () => {
+    try {
+      limparUso()
+    } catch (error) {
+      console.error(error)
+    }
     navigation.reset({ index: 0, routes: [{ name: 'Inicio' }] });
   };
 
