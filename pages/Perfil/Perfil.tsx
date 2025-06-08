@@ -48,7 +48,7 @@ const Perfil = () => {
   const handleLogout = () => {
     setUserId(null);
     setToken(null);
-    navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+    navigation.reset({ index: 0, routes: [{ name: 'Inicio' }] });
   };
 
   return (
