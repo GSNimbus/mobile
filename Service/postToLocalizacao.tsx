@@ -33,10 +33,7 @@ export default function usePostToLocalizacao() {
           }
         );
       } catch (error: any) {
-        if (error.response?.status === 403) {
-          navigation.navigate("Inicio");
-        }
-        ToastAndroid.show("Erro ao postar localização", ToastAndroid.SHORT);
+        console.log("Erro no post to localização!")
         return null;
       }
     },

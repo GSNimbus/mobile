@@ -21,7 +21,7 @@ const API_URL = process.env.EXPO_PUBLIC_NIMBUS_API;
 export default function AuthorizedCaller() {
   const { token, setToken, setUserId } = useContext(AuthContext);
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, "Inicio">>();
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "Principal">>();
   return useCallback(
     async <T = any,>(
       method: Method,

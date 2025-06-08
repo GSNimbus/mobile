@@ -23,7 +23,7 @@ export default function Previsoes() {
             );
             setPrevisoes(previsoes);
           } catch (e: any) {
-            console.error("Erro ao buscar previsões:", e);
+            console.log("Erro ao buscar previsões")
           }
         })();
       }, [userId, authorizedRequest]);

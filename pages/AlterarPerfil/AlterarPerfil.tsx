@@ -13,9 +13,13 @@ import AuthorizedCaller from "../../Service/AuthorizedCaller";
 import { AuthContext } from "../../Service/ProfileContext";
 import {
   bairroInterface,
+  CasaGrupoResponse,
   cidadeInterface,
+  EnderecoInput,
   enderecoInterface,
   estadoInterface,
+  GrupoLocalizacaoInput,
+  GrupoLocalizacaoInterface,
   userResponse,
   ViacepData,
 } from "../../util/interfaces";
@@ -40,6 +44,8 @@ const AlterarPerfil = () => {
   const [numLogradouro, setNumLogradouro] = useState("");
   const [disable, setDisable] = useState<boolean>(true);
   const [endereco, setEndereco] = useState<enderecoInterface>();
+  const [nomeGrupo, setNomeGrupo] = useState("")
+  const [idGrupoLocalizacao, setIdGrupoLocalizacao] = useState<number>(0)
 
   useEffect(() => {
     if (!userId) return;
@@ -54,17 +60,20 @@ const AlterarPerfil = () => {
         setEmail(usuario.email);
         setSenha(usuario.password);
         console.log("cavalo 1000");
-        const enderecoResponse = await authorizedRequest<enderecoInterface>(
+        const casa = await authorizedRequest<CasaGrupoResponse>(
           "GET",
           `/grupo-localizacao/casa/usuario/${userId}`
         );
-        setEndereco(enderecoResponse);
-        setEstado(enderecoResponse.idBairro.idCidade.idEstado.nmEstado);
-        setCidade(enderecoResponse.idBairro.idCidade.nmCidade);
-        setBairro(enderecoResponse.idBairro.nome);
-        setLogradouro(enderecoResponse.nmLogradouro);
-        setNumLogradouro(enderecoResponse.nrLogradouro.toString());
-        setCep(enderecoResponse.cep.toString());
+        console.log(`Casa: ${casa}`)
+        setEndereco(casa.endereco);
+        setEstado(casa.endereco.idBairro.idCidade.idEstado.nmEstado);
+        setCidade(casa.endereco.idBairro.idCidade.nmCidade);
+        setBairro(casa.endereco.idBairro.nome);
+        setLogradouro(casa.endereco.nmLogradouro);
+        setNumLogradouro(casa.endereco.nrLogradouro.toString());
+        setCep(casa.endereco.cep.toString());
+        setIdGrupoLocalizacao(casa.idGrupoLocalizacao)
+        setNomeGrupo(casa.nome)
         console.log("cavalo 1001");
       } catch (e) {
         console.error("Erro ao buscar previsões:", e);
@@ -87,9 +96,7 @@ const AlterarPerfil = () => {
     setDisable(false);
   };
 
-  // Debounce CEP input: trigger chamarViacep 500ms after user stops typing when CEP has 8 digits
   useEffect(() => {
-    // disable number input until address is fetched
     setDisable(true);
     if (cep.length !== 8) return;
     const handler = setTimeout(() => {
@@ -104,35 +111,37 @@ const AlterarPerfil = () => {
 
   const handleSubmit = async () => {
     const form = { nome, email, senha, cep, pais: "Brasil", estado, cidade };
-    const userUpdateObj = {
-      username: nome,
-      email,
-      password: senha,
-    };
-    const estadoUpdateObj = {
-      nome: estado,
-      idPais: endereco!.idBairro.idCidade.idEstado.idPais.idPais,
-    };
-    const cidadeUpdateObj = {
-      nome: cidade,
-      idEstado: endereco!.idBairro.idCidade.idEstado.idEstado,
-    };
-    const bairroUpdateObj = {
-      nome : bairro,
-      idCidade : endereco!.idBairro.idCidade.idCidade
+    
+    const enderecoUpdateObj : EnderecoInput = {
+      numLogradouro : parseFloat(numLogradouro),
+      bairro,
+      cep,
+      nomeLogradouro: logradouro,
+      cidade,
+      estado,
+      pais : "Brasil"
     }
-    const enderecoUpdateObj = {
-      logradouro: logradouro,
-      numLogradouro,
-      bairro: endereco!.idBairro.id,
-      cep: cep
+
+   
+  
+  console.log(enderecoUpdateObj)
+  console.log("Cheguei aqui")  
+  const enderecoResponse = await authorizedRequest<enderecoInterface>("POST", `/endereco/todo/`, enderecoUpdateObj);
+  console.log(enderecoResponse)  
+  
+  const grupoLocalizacaoUpdateObj : GrupoLocalizacaoInput = {
+      idUsuario: userId!,
+      idEndereco: enderecoResponse.idEndereco,
+      nome: nomeGrupo
     }
-    await authorizedRequest<userResponse>("PUT", `/usuario/${userId}`, userUpdateObj);
-    await authorizedRequest<estadoInterface>("PUT", `/estado/${endereco!.idBairro.idCidade.idEstado.idEstado}`, estadoUpdateObj);
-    await authorizedRequest<cidadeInterface>("PUT", `/cidade/${endereco!.idBairro.idCidade.idCidade}`, cidadeUpdateObj);
-    await authorizedRequest<bairroInterface>("PUT", `/bairro/${endereco!.idBairro.id}`, bairroUpdateObj);
-    await authorizedRequest<enderecoInterface>("PUT", `/endereco/${endereco!.idEndereco}`, enderecoUpdateObj);
-     ToastAndroid.show("Dados atualizados com sucesso!", ToastAndroid.LONG)
+    
+    await authorizedRequest<GrupoLocalizacaoInterface>(
+      "PUT",
+      `grupo-localizacao/${idGrupoLocalizacao}`,
+      grupoLocalizacaoUpdateObj
+    ) 
+
+    ToastAndroid.show("Dados atualizados com sucesso!", ToastAndroid.LONG)
      navigation.navigate("Perfil")
 
      console.log("Dados do formulário:", form);

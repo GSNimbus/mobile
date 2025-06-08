@@ -55,7 +55,7 @@ export default function FormularioMudaGp(props: FormularioLocalizacaoSalvasProps
                 <Ionicons onPress={() => { props.setShowModal(!props.showModal) }} name="close-circle" size={36} color="white" style={{ marginTop: 10 }} />
             </View>
             <InputLabel title="Nome" setValue={setNome} value={nome} placeholder="Escreva o nome da localização" show={false}></InputLabel>
-            <Botao title="Criar grupo de localização" action={() => { putToGpLoc }} size="small"></Botao>
+            <Botao title="Criar grupo de localização" action={() => { putToGpLoc() }} size="small"></Botao>
             </View>
             )
             

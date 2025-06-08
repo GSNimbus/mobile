@@ -57,18 +57,10 @@ export default function FormularioLogin() {
 
         // Armazena token e userId
         await AsyncStorage.setItem("token", tokenResponse.token);
-        const userId =
-          tokenResponse.idUsuario ?? tokenResponse.idUsuario ?? null;
-        if (userId !== null) {
-          await AsyncStorage.setItem("userId", userId.toString());
-          setUserId(userId);
-        } else {
-          console.warn(
-            "ID do usuário não encontrado na resposta da API de login"
-          );
-        }
-
+        await AsyncStorage.setItem("userId", tokenResponse.idUsuario.toString());
+        setUserId(tokenResponse.idUsuario);
         setToken(tokenResponse.token);
+        console.log("Estou aqui")
         navigation.navigate("Principal");
       } else {
         ToastAndroid.show("Erro ao realizar login", ToastAndroid.LONG);

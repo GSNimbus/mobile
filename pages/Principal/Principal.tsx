@@ -34,22 +34,12 @@ export default function Principal() {
   const [location, setLocation] = useState<LocationObject | null>(null)
 
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList, "Inicio">>();
+    useNavigation<NativeStackNavigationProp<RootStackParamList, "Principal">>();
   const authorizedRequest = AuthorizedCaller();
   const postToLocalizacao = usePostToLocalizacao();
 
   useEffect(() => {
-    const clean = async () => {
-      try {
-        await AsyncStorage.clear()
-        setUserId(null)
-        setToken(null)
-        navigation.navigate('Inicio')
-      } catch (error) {
-        console.log("erro: ", error)
-      }
-    }
-
+    console.log('Cheguei no Principal!')
     const loadLocation = async () => {
       try {
         const loc = await getCurrentLocation();
@@ -62,7 +52,6 @@ export default function Principal() {
         console.error("Erro ao obter localização:", e);
       }
     };
-    // clean();
     loadLocation();
   }, []);
 

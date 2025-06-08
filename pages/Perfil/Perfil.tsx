@@ -12,7 +12,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../util/types";
 import AuthorizedCaller from "../../Service/AuthorizedCaller";
 import { AuthContext } from "../../Service/ProfileContext";
-import { enderecoInterface, userResponse } from "../../util/interfaces";
+import { CasaGrupoResponse, enderecoInterface, userResponse } from "../../util/interfaces";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Perfil = () => {
@@ -34,11 +34,11 @@ const Perfil = () => {
         );
         setUser(usuario);
         console.log("cavalo 1000");
-        const endereco = await authorizedRequest<enderecoInterface>(
+        const casaGrupoResponse = await authorizedRequest<CasaGrupoResponse>(
           "GET",
           `/grupo-localizacao/casa/usuario/${userId}`
         );
-        setEndereco(endereco);
+        setEndereco(casaGrupoResponse.endereco);
         console.log("cavalo 1001");
       } catch (e) {
         console.error("Erro ao buscar previsões:", e);
