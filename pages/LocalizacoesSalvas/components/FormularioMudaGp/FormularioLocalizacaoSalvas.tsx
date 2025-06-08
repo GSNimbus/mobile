@@ -47,15 +47,15 @@ export default function FormularioMudaGp(props: FormularioLocalizacaoSalvasProps
     return (
         <View style={{ padding: 20, gap: 20 }}>
             <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'space-between' }}>
-                <View style={{ width: "50%", borderRadius: 10, padding: 10 }}>
-                    <Text style={[styles.whiteText, { fontSize: 32, fontWeight: 500, textAlign: 'left' }]}>Alertas</Text>
+                <View style={{ width: "90%", borderRadius: 10, padding: 10 }}>
+                    <Text style={[styles.whiteText, { fontSize: 26, fontWeight: 500, textAlign: 'left' }]}>Grupo de localização</Text>
                     <View style={{ borderWidth: 1, width: "100%", borderColor: "white" }}></View>
 
                 </View>
                 <Ionicons onPress={() => { props.setShowModal(!props.showModal) }} name="close-circle" size={36} color="white" style={{ marginTop: 10 }} />
             </View>
             <InputLabel title="Nome" setValue={setNome} value={nome} placeholder="Escreva o nome da localização" show={false}></InputLabel>
-            <Botao title="Criar grupo de localização" action={() => { putToGpLoc() }} size="small"></Botao>
+            <Botao title="Alterar grupo de localização" action={() => { putToGpLoc() }} size="small"></Botao>
             </View>
             )
             
