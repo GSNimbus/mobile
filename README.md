@@ -4,7 +4,7 @@ Nossa solução para a Global Solution consiste em uma aplicação voltada para 
 
 A aplicação coleta dados atualizados da previsão do tempo e a posição geográfica do usuário, utilizando essas informações junto a um modelo de inteligência artificial para prever a chance de ocorrência de desastres naturais em sua região.
 
-Com base nessa previsão, o sistema envia alertas classificados em três níveis: baixo, médio e grave — permitindo avisar cada pessoa com precisão e antecedência.
+Com base nessa previsão, o sistema envia alertas classificados em três níveis: baixo, médio e grave permitindo avisar cada pessoa com precisão e antecedência.
 
 Além disso, o usuário poderá adicionar grupos de localização, como a casa de familiares, o local de trabalho ou outros pontos de interesse. Dessa forma, ele receberá alertas personalizados para essas regiões também, ajudando na prevenção e no planejamento diante de possíveis enchentes ou outros eventos climáticos extremos.
 
