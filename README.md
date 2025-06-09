@@ -8,6 +8,18 @@ Com base nessa previsão, o sistema envia alertas classificados em três níveis
 
 Além disso, o usuário poderá adicionar grupos de localização, como a casa de familiares, o local de trabalho ou outros pontos de interesse. Dessa forma, ele receberá alertas personalizados para essas regiões também, ajudando na prevenção e no planejamento diante de possíveis enchentes ou outros eventos climáticos extremos.
 
+## Integrantes
+
+- FELIPE RIBEIRO TARDOCHI DA SILVA - RM555100 - 2TDSPH
+- GUSTAVO DIAS DA SILVA CRUZ - RM556448 - 2TDSPH
+- JULIA MEDEIROS ANGELOZI – RM556364 - 2TDSPH
+
+## Vídeo
+
+https://youtu.be/ZOWYomjN8i4
+
+
+
 ## Sobre o Projeto
 
 Este é um aplicativo móvel desenvolvido com React Native e Expo, focado em fornecer informações meteorológicas, alertas e funcionalidades relacionadas à localização do usuário.
