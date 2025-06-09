@@ -18,8 +18,6 @@ Além disso, o usuário poderá adicionar grupos de localização, como a casa d
 
 https://youtu.be/ZOWYomjN8i4
 
-
-
 ## Sobre o Projeto
 
 Este é um aplicativo móvel desenvolvido com React Native e Expo, focado em fornecer informações meteorológicas, alertas e funcionalidades relacionadas à localização do usuário.
@@ -54,9 +52,7 @@ A estrutura de pastas do projeto é organizada da seguinte forma:
 ## Instalação
 
 1.  Clone o repositório:
-    ```bash
-    git clone <url-do-repositorio>
-    ```
+
 2.  Navegue até o diretório do projeto:
     ```bash
     cd mobile
